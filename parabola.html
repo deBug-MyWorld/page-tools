@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>抛物线曲线演示工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            margin-top: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            color: #ffcc00;
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.4rem;
+            color: #66ccff;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .graph-container {
+            flex: 1;
+            min-width: 500px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        #graph {
+            width: 100%;
+            height: 500px;
+            display: block;
+            background: #f8f9fa;
+        }
+        
+        .controls {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+        }
+        
+        .param-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .param-title span {
+            font-weight: bold;
+            color: #ff6b6b;
+            font-size: 1.8rem;
+            margin: 0 5px;
+        }
+        
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        input[type="range"] {
+            flex: 1;
+            height: 10px;
+            border-radius: 5px;
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #ffcc00;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        input[type="number"] {
+            width: 80px;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 2px solid #3498db;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1.2rem;
+            text-align: center;
+            outline: none;
+        }
+        
+        .equation {
+            text-align: center;
+            font-size: 2.5rem;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+        }
+        
+        .equation span {
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+        
+        .explanation {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .explanation h3 {
+            color: #ffcc00;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .explanation ul {
+            padding-left: 25px;
+            line-height: 1.8;
+        }
+        
+        .explanation li {
+            margin-bottom: 10px;
+        }
+        
+        .explanation strong {
+            color: #66ccff;
+        }
+        
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #95a5a6;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 850px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .graph-container {
+                min-width: 100%;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><i class="fas fa-chart-line"></i> 抛物线曲线演示工具</h1>
+        <p class="subtitle">探索二次函数 y = ax² + bx + c 的参数变化如何影响曲线形状</p>
+    </header>
+    
+    <div class="container">
+        <div class="equation">
+            y = <span id="a-value">1</span>x² + <span id="b-value">0</span>x + <span id="c-value">0</span>
+        </div>
+        
+        <div class="content">
+            <div class="graph-container">
+                <canvas id="graph" width="500" height="500"></canvas>
+            </div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <div class="param-title">
+                        <i class="fas fa-caret-up" style="color: #e74c3c;"></i>
+                        参数 a: <span id="a-display">1.00</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" id="a-slider" min="-5" max="5" step="0.1" value="1">
+                        <input type="number" id="a-input" value="1" step="0.1">
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="param-title">
+                        <i class="fas fa-caret-right" style="color: #3498db;"></i>
+                        参数 b: <span id="b-display">0.00</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" id="b-slider" min="-10" max="10" step="0.1" value="0">
+                        <input type="number" id="b-input" value="0" step="0.1">
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <div class="param-title">
+                        <i class="fas fa-caret-down" style="color: #2ecc71;"></i>
+                        参数 c: <span id="c-display">0.00</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" id="c-slider" min="-10" max="10" step="0.1" value="0">
+                        <input type="number" id="c-input" value="0" step="0.1">
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <button id="reset-btn" style="width:100%; padding:15px; background:linear-gradient(90deg, #e74c3c, #e67e22); color:white; border:none; border-radius:10px; font-size:1.2rem; cursor:pointer; margin-top:20px;">
+                        <i class="fas fa-sync-alt"></i> 重置参数
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="explanation">
+            <h3><i class="fas fa-lightbulb"></i> 二次函数参数说明</h3>
+            <ul>
+                <li><strong>参数 a</strong>：决定抛物线的开口方向和宽度。当 a > 0 时开口向上，a < 0 时开口向下。|a| 越大，开口越窄。</li>
+                <li><strong>参数 b</strong>：影响抛物线的对称轴位置和顶点横坐标。对称轴公式为 x = -b/(2a)。</li>
+                <li><strong>参数 c</strong>：决定抛物线与 y 轴的交点（纵截距）。当 x=0 时，y=c。</li>
+                <li>抛物线<strong>顶点坐标</strong>公式为：(-b/(2a), (4ac-b²)/(4a))</li>
+            </ul>
+        </div>
+    </div>
+    
+    <footer>
+        <p>初中数学教学工具 | 抛物线曲线演示 | © 2023 数学可视化实验室</p>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取Canvas和上下文
+            const canvas = document.getElementById('graph');
+            const ctx = canvas.getContext('2d');
+            
+            // 设置坐标系参数
+            const originX = canvas.width / 2;
+            const originY = canvas.height / 2;
+            const scale = 40; // 每单位40像素
+            const gridSize = 1; // 网格大小为1单位
+            
+            // 获取DOM元素
+            const aSlider = document.getElementById('a-slider');
+            const aInput = document.getElementById('a-input');
+            const aDisplay = document.getElementById('a-display');
+            const aValue = document.getElementById('a-value');
+            
+            const bSlider = document.getElementById('b-slider');
+            const bInput = document.getElementById('b-input');
+            const bDisplay = document.getElementById('b-display');
+            const bValue = document.getElementById('b-value');
+            
+            const cSlider = document.getElementById('c-slider');
+            const cInput = document.getElementById('c-input');
+            const cDisplay = document.getElementById('c-display');
+            const cValue = document.getElementById('c-value');
+            
+            const resetBtn = document.getElementById('reset-btn');
+            
+            // 初始化参数
+            let a = 1;
+            let b = 0;
+            let c = 0;
+            
+            // 绘制坐标系
+            function drawCoordinateSystem() {
+                // 清除画布
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // 绘制网格
+                ctx.strokeStyle = '#e0e0e0';
+                ctx.lineWidth = 0.5;
+                
+                // 垂直线
+                for (let x = -Math.floor(canvas.width / scale / 2); x <= Math.floor(canvas.width / scale / 2); x++) {
+                    if (x === 0) continue; // 跳过y轴
+                    ctx.beginPath();
+                    ctx.moveTo(originX + x * scale, 0);
+                    ctx.lineTo(originX + x * scale, canvas.height);
+                    ctx.stroke();
+                }
+                
+                // 水平线
+                for (let y = -Math.floor(canvas.height / scale / 2); y <= Math.floor(canvas.height / scale / 2); y++) {
+                    if (y === 0) continue; // 跳过x轴
+                    ctx.beginPath();
+                    ctx.moveTo(0, originY + y * scale);
+                    ctx.lineTo(canvas.width, originY + y * scale);
+                    ctx.stroke();
+                }
+                
+                // 绘制坐标轴
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                
+                // x轴
+                ctx.beginPath();
+                ctx.moveTo(0, originY);
+                ctx.lineTo(canvas.width, originY);
+                ctx.stroke();
+                
+                // y轴
+                ctx.beginPath();
+                ctx.moveTo(originX, 0);
+                ctx.lineTo(originX, canvas.height);
+                ctx.stroke();
+                
+                // 绘制箭头
+                // x轴箭头
+                ctx.beginPath();
+                ctx.moveTo(canvas.width - 10, originY - 5);
+                ctx.lineTo(canvas.width, originY);
+                ctx.lineTo(canvas.width - 10, originY + 5);
+                ctx.fillStyle = '#000';
+                ctx.fill();
+                
+                // y轴箭头
+                ctx.beginPath();
+                ctx.moveTo(originX - 5, 10);
+                ctx.lineTo(originX, 0);
+                ctx.lineTo(originX + 5, 10);
+                ctx.fill();
+                
+                // 绘制刻度
+                ctx.font = '12px Arial';
+                ctx.fillStyle = '#333';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                
+                // x轴刻度
+                for (let x = -Math.floor(canvas.width / scale / 2) + 1; x < Math.floor(canvas.width / scale / 2); x++) {
+                    if (x === 0) continue;
+                    ctx.beginPath();
+                    ctx.moveTo(originX + x * scale, originY - 5);
+                    ctx.lineTo(originX + x * scale, originY + 5);
+                    ctx.stroke();
+                    ctx.fillText(x.toString(), originX + x * scale, originY + 8);
+                }
+                
+                // y轴刻度
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'middle';
+                for (let y = -Math.floor(canvas.height / scale / 2) + 1; y < Math.floor(canvas.height / scale / 2); y++) {
+                    if (y === 0) continue;
+                    ctx.beginPath();
+                    ctx.moveTo(originX - 5, originY + y * scale);
+                    ctx.lineTo(originX + 5, originY + y * scale);
+                    ctx.stroke();
+                    ctx.fillText((-y).toString(), originX - 8, originY + y * scale);
+                }
+                
+                // 绘制原点
+                ctx.fillStyle = '#000';
+                ctx.beginPath();
+                ctx.arc(originX, originY, 4, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // 坐标轴标签
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'top';
+                ctx.fillText('O', originX - 8, originY + 8);
+                
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                ctx.fillText('x', canvas.width - 15, originY + 5);
+                
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'top';
+                ctx.fillText('y', originX - 5, 5);
+            }
+            
+            // 绘制抛物线
+            function drawParabola() {
+                ctx.strokeStyle = '#e74c3c';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                
+                // 计算抛物线上的点
+                for (let i = -10; i <= 10; i += 0.05) {
+                    const x = i;
+                    const y = a * Math.pow(x, 2) + b * x + c;
+                    
+                    // 转换为Canvas坐标
+                    const canvasX = originX + x * scale;
+                    const canvasY = originY - y * scale;
+                    
+                    if (i === -10) {
+                        ctx.moveTo(canvasX, canvasY);
+                    } else {
+                        ctx.lineTo(canvasX, canvasY);
+                    }
+                }
+                
+                ctx.stroke();
+                
+                // 绘制顶点
+                const vertexX = -b / (2 * a);
+                const vertexY = a * Math.pow(vertexX, 2) + b * vertexX + c;
+                
+                const canvasVertexX = originX + vertexX * scale;
+                const canvasVertexY = originY - vertexY * scale;
+                
+                ctx.fillStyle = '#3498db';
+                ctx.beginPath();
+                ctx.arc(canvasVertexX, canvasVertexY, 6, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = '#000';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'bottom';
+                ctx.fillText(`顶点 (${vertexX.toFixed(2)}, ${vertexY.toFixed(2)})`, canvasVertexX + 8, canvasVertexY - 8);
+            }
+            
+            // 更新参数显示和绘图
+            function updateParameters() {
+                aDisplay.textContent = a.toFixed(2);
+                bDisplay.textContent = b.toFixed(2);
+                cDisplay.textContent = c.toFixed(2);
+                
+                aValue.textContent = a.toFixed(1);
+                bValue.textContent = b.toFixed(1);
+                cValue.textContent = c.toFixed(1);
+                
+                drawCoordinateSystem();
+                drawParabola();
+            }
+            
+            // 事件监听器
+            aSlider.addEventListener('input', function() {
+                a = parseFloat(this.value);
+                aInput.value = a;
+                updateParameters();
+            });
+            
+            aInput.addEventListener('input', function() {
+                a = parseFloat(this.value) || 0;
+                aSlider.value = a;
+                updateParameters();
+            });
+            
+            bSlider.addEventListener('input', function() {
+                b = parseFloat(this.value);
+                bInput.value = b;
+                updateParameters();
+            });
+            
+            bInput.addEventListener('input', function() {
+                b = parseFloat(this.value) || 0;
+                bSlider.value = b;
+                updateParameters();
+            });
+            
+            cSlider.addEventListener('input', function() {
+                c = parseFloat(this.value);
+                cInput.value = c;
+                updateParameters();
+            });
+            
+            cInput.addEventListener('input', function() {
+                c = parseFloat(this.value) || 0;
+                cSlider.value = c;
+                updateParameters();
+            });
+            
+            resetBtn.addEventListener('click', function() {
+                a = 1;
+                b = 0;
+                c = 0;
+                
+                aSlider.value = a;
+                aInput.value = a;
+                
+                bSlider.value = b;
+                bInput.value = b;
+                
+                cSlider.value = c;
+                cInput.value = c;
+                
+                updateParameters();
+            });
+            
+            // 初始绘制
+            drawCoordinateSystem();
+            drawParabola();
+        });
+    </script>
+</body>
+</html>
