@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechPortal | 个人工具与导航</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f0c29, #1a1a2e, #16213e);
+            color: #e2e8f0;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding: 20px;
+            position: relative;
+        }
+        
+        .grid-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .tech-glow {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.2), transparent 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -2;
+            transform: translate(-50%, -50%);
+            animation: pulse 8s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.1; transform: translate(-50%, -50%) scale(0.8); }
+            100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1.2); }
+        }
+        
+        .floating-element {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.7);
+            animation: float 15s infinite ease-in-out;
+            z-index: -1;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(100px, 80px); }
+            50% { transform: translate(50px, 150px); }
+            75% { transform: translate(-100px, 80px); }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* 头部样式 */
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 40px;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .logo h1 {
+            font-size: 3.2rem;
+            background: linear-gradient(to right, #38bdf8, #0ea5e9, #22d3ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+        
+        .logo p {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        .time-display {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 16px;
+            padding: 18px 35px;
+            box-shadow: 0 0 25px rgba(56, 189, 248, 0.15);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        #time {
+            font-size: 3.2rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            background: linear-gradient(to right, #22d3ee, #38bdf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 5px;
+        }
+        
+        #date {
+            font-size: 1.4rem;
+            color: #cbd5e1;
+            letter-spacing: 1px;
+        }
+        
+        /* 主要内容区域 */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 1100px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 工具区域 */
+        .tools-section, .nav-section {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 20px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 30px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.3);
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 15px;
+            background: rgba(56, 189, 248, 0.2);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        /* 工具卡片 */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .tool-card {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.5);
+            border-color: rgba(56, 189, 248, 0.4);
+        }
+        
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #0ea5e9, #22d3ee);
+        }
+        
+        .tool-card .tool-icon {
+            font-size: 2.5rem;
+            color: #38bdf8;
+            margin-bottom: 20px;
+        }
+        
+        .tool-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            color: #f8fafc;
+        }
+        
+        .tool-card p {
+            color: #94a3b8;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            flex-grow: 1;
+            margin-bottom: 20px;
+        }
+        
+        .tool-link {
+            display: inline-flex;
+            align-items: center;
+            color: #22d3ee;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            padding: 8px 15px;
+            background: rgba(56, 189, 248, 0.1);
+            border-radius: 8px;
+            width: fit-content;
+        }
+        
+        .tool-link:hover {
+            background: rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+            transform: translateX(5px);
+        }
+        
+        .tool-link i {
+            margin-left: 8px;
+            transition: transform 0.3s;
+        }
+        
+        .tool-link:hover i {
+            transform: translateX(5px);
+        }
+        
+        /* 导航区域 */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 22px;
+            margin-bottom: 30px;
+        }
+        
+        .nav-card {
+            background: rgba(30, 41, 59, 0.7);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px 15px;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(56, 189, 248, 0.1);
+            cursor: pointer;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            border-color: rgba(56, 189, 248, 0.4);
+            background: rgba(30, 41, 59, 0.9);
+        }
+        
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(to right, #0ea5e9, #22d3ee);
+        }
+        
+        .nav-icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 50%;
+            margin-bottom: 15px;
+            font-size: 2rem;
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+        
+        .nav-card span {
+            color: #f8fafc;
+            font-size: 1.05rem;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        /* 分页控件 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+            gap: 12px;
+        }
+        
+        .page-btn {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            color: #38bdf8;
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .page-btn:hover, .page-btn.active {
+            background: rgba(56, 189, 248, 0.2);
+            color: #e2e8f0;
+            transform: scale(1.08);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+        
+        /* 页脚 */
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 30px;
+            color: #94a3b8;
+            font-size: 1rem;
+            border-top: 1px solid rgba(94, 234, 212, 0.2);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 900px) {
+            .tools-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+            
+            .nav-grid {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            }
+            
+            #time {
+                font-size: 2.5rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .logo h1 {
+                font-size: 2.5rem;
+            }
+            
+            #time {
+                font-size: 2.2rem;
+            }
+            
+            #date {
+                font-size: 1.2rem;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .container {
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        .tool-card, .nav-card {
+            animation: fadeIn 0.6s ease-out;
+        }
+        
+        /* 科技线条 */
+        .tech-line {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #38bdf8, transparent);
+            animation: lineMove 10s infinite linear;
+            z-index: -1;
+        }
+        
+        @keyframes lineMove {
+            0% { 
+                top: 0;
+                left: -100%;
+                width: 30%;
+            }
+            50% {
+                top: 100%;
+                left: 30%;
+                width: 70%;
+            }
+            100% {
+                top: 0;
+                left: 100%;
+                width: 40%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-pattern"></div>
+    <div class="tech-glow"></div>
+    <div class="tech-line"></div>
+    
+    <!-- 悬浮粒子 -->
+    <div class="floating-element" style="top: 20%; left: 15%;"></div>
+    <div class="floating-element" style="top: 65%; left: 80%; width: 20px; height: 20px;"></div>
+    <div class="floating-element" style="top: 40%; left: 45%;"></div>
+    
+    <div class="container">
+        <header>
+            <div class="logo">
+                <h1>TechPortal</h1>
+                <p>个人开发工具与常用资源导航平台 | 高效 · 简洁 · 强大</p>
+            </div>
+            <div class="time-display">
+                <div id="time">00:00:00</div>
+                <div id="date">2023年1月1日 星期一</div>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <section class="tools-section">
+                <h2 class="section-title"><i class="fas fa-tools"></i> 我的工具</h2>
+                <div class="tools-grid" id="tools-grid">
+                    <!-- 工具项由JavaScript动态生成 -->
+                </div>
+                
+                <div class="pagination" id="tools-pagination">
+                    <!-- 工具分页按钮由JavaScript动态生成 -->
+                </div>
+            </section>
+            
+            <section class="nav-section">
+                <h2 class="section-title"><i class="fas fa-compass"></i> 常用导航</h2>
+                <div class="nav-grid" id="nav-grid">
+                    <!-- 导航项由JavaScript动态生成 -->
+                </div>
+                
+                <div class="pagination" id="nav-pagination">
+                    <!-- 导航分页按钮由JavaScript动态生成 -->
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <p>© 2025 TechPortal 个人主页 | 科技改变生活，工具提升效率</p>
+        </footer>
+    </div>
+    
+    <script>
+        // 更新时间和日期
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('zh-CN', { hour12: false });
+            const dateStr = now.toLocaleDateString('zh-CN', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                weekday: 'long'
+            });
+            
+            document.getElementById('time').textContent = timeStr;
+            document.getElementById('date').textContent = dateStr;
+        }
+        
+        // 初始化时间和日期
+        updateTime();
+        setInterval(updateTime, 1000);
+        
+        // 导航数据
+        const navItems = [
+            { name: "哔哩哔哩", icon: "fab fa-bilibili", url: "https://www.bilibili.com" },
+            { name: "抖音", icon: "fab fa-tiktok", url: "https://www.douyin.com" },
+            { name: "CSDN", icon: "fas fa-code", url: "https://www.csdn.net" },
+            { name: "Google", icon: "fab fa-google", url: "https://www.google.com" },
+            { name: "GitHub", icon: "fab fa-github", url: "https://github.com" },
+            { name: "Bing", icon: "fa-solid fa-b", url: "https://cn.bing.com/"},
+            { name: "FontAwesome", icon: "fa-brands fa-font-awesome" , url: "https://fontawesome.com/"},
+        ];
+        
+        // 工具数据（带链接）
+        const tools = [
+            { 
+                name: "分项价格计算器", 
+                description: "根据总价格和分项数量，计算每个分项的价格",
+                icon: "fas fa-chart-line",
+                url: "price.html"
+            },
+            { 
+                name: "贪吃蛇", 
+                description: "经典游戏贪吃蛇",
+                icon: "fa-solid fa-gamepad",
+                url: "snake.html"
+            },
+            { 
+                name: "抛物线可视化", 
+                description: "交互式的抛物线演示页面",
+                icon: "fa-solid fa-square-root-variable",
+                url: "parabola.html"
+            },
+        ];
+        
+        // 分页设置
+        const navItemsPerPage = 12;
+        const toolsPerPage = 4;
+        let navCurrentPage = 1;
+        let toolsCurrentPage = 1;
+        
+        // 渲染导航项
+        function renderNavItems(page) {
+            const navGrid = document.getElementById('nav-grid');
+            navGrid.innerHTML = '';
+            
+            const startIndex = (page - 1) * navItemsPerPage;
+            const endIndex = Math.min(startIndex + navItemsPerPage, navItems.length);
+            const pageItems = navItems.slice(startIndex, endIndex);
+            
+            pageItems.forEach(item => {
+                const navCard = document.createElement('a');
+                navCard.className = 'nav-card';
+                navCard.href = item.url;
+                navCard.target = '_blank';
+                
+                navCard.innerHTML = `
+                    <div class="nav-icon">
+                        <i class="${item.icon}"></i>
+                    </div>
+                    <span>${item.name}</span>
+                `;
+                
+                navGrid.appendChild(navCard);
+            });
+        }
+        
+        // 渲染工具项
+        function renderTools(page) {
+            const toolsGrid = document.getElementById('tools-grid');
+            toolsGrid.innerHTML = '';
+            
+            const startIndex = (page - 1) * toolsPerPage;
+            const endIndex = Math.min(startIndex + toolsPerPage, tools.length);
+            const pageItems = tools.slice(startIndex, endIndex);
+            
+            pageItems.forEach(tool => {
+                const toolCard = document.createElement('a');
+                toolCard.className = 'tool-card';
+                toolCard.href = tool.url;
+                toolCard.target = '_blank';
+                
+                toolCard.innerHTML = `
+                    <div class="tool-icon">
+                        <i class="${tool.icon}"></i>
+                    </div>
+                    <h3>${tool.name}</h3>
+                    <p>${tool.description}</p>
+                    <span class="tool-link">立即使用 <i class="fas fa-arrow-right"></i></span>
+                `;
+                
+                toolsGrid.appendChild(toolCard);
+            });
+        }
+        
+        // 渲染导航分页按钮
+        function renderNavPagination() {
+            const pagination = document.getElementById('nav-pagination');
+            pagination.innerHTML = '';
+            
+            const totalPages = Math.ceil(navItems.length / navItemsPerPage);
+            
+            // 上一页按钮
+            const prevBtn = document.createElement('div');
+            prevBtn.className = 'page-btn';
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevBtn.addEventListener('click', () => {
+                if (navCurrentPage > 1) {
+                    navCurrentPage--;
+                    renderNavItems(navCurrentPage);
+                    renderNavPagination();
+                }
+            });
+            pagination.appendChild(prevBtn);
+            
+            // 页码按钮
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, navCurrentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = startPage + maxVisiblePages - 1;
+            
+            if (endPage > totalPages) {
+                endPage = totalPages;
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('div');
+                pageBtn.className = `page-btn ${i === navCurrentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.addEventListener('click', () => {
+                    navCurrentPage = i;
+                    renderNavItems(navCurrentPage);
+                    renderNavPagination();
+                });
+                pagination.appendChild(pageBtn);
+            }
+            
+            // 下一页按钮
+            const nextBtn = document.createElement('div');
+            nextBtn.className = 'page-btn';
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextBtn.addEventListener('click', () => {
+                if (navCurrentPage < totalPages) {
+                    navCurrentPage++;
+                    renderNavItems(navCurrentPage);
+                    renderNavPagination();
+                }
+            });
+            pagination.appendChild(nextBtn);
+        }
+        
+        // 渲染工具分页按钮
+        function renderToolsPagination() {
+            const toolsPagination = document.getElementById('tools-pagination');
+            toolsPagination.innerHTML = '';
+            
+            const totalPages = Math.ceil(tools.length / toolsPerPage);
+            
+            // 上一页按钮
+            const prevBtn = document.createElement('div');
+            prevBtn.className = 'page-btn';
+            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevBtn.addEventListener('click', () => {
+                if (toolsCurrentPage > 1) {
+                    toolsCurrentPage--;
+                    renderTools(toolsCurrentPage);
+                    renderToolsPagination();
+                }
+            });
+            toolsPagination.appendChild(prevBtn);
+            
+            // 页码按钮
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, toolsCurrentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = startPage + maxVisiblePages - 1;
+            
+            if (endPage > totalPages) {
+                endPage = totalPages;
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('div');
+                pageBtn.className = `page-btn ${i === toolsCurrentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.addEventListener('click', () => {
+                    toolsCurrentPage = i;
+                    renderTools(toolsCurrentPage);
+                    renderToolsPagination();
+                });
+                toolsPagination.appendChild(pageBtn);
+            }
+            
+            // 下一页按钮
+            const nextBtn = document.createElement('div');
+            nextBtn.className = 'page-btn';
+            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextBtn.addEventListener('click', () => {
+                if (toolsCurrentPage < totalPages) {
+                    toolsCurrentPage++;
+                    renderTools(toolsCurrentPage);
+                    renderToolsPagination();
+                }
+            });
+            toolsPagination.appendChild(nextBtn);
+        }
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNavItems(navCurrentPage);
+            renderNavPagination();
+            renderTools(toolsCurrentPage);
+            renderToolsPagination();
+            
+            // 添加科技线条动画
+            const techLine = document.querySelector('.tech-line');
+            setInterval(() => {
+                techLine.style.animation = 'none';
+                setTimeout(() => {
+                    techLine.style.animation = 'lineMove 10s infinite linear';
+                }, 10);
+            }, 10000);
+        });
+    </script>
+</body>
+</html>
