@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人民币大小写转换工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36CFC9',
+                        accent: '#722ED1',
+                        dark: '#1D2129',
+                        light: '#F2F3F5',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .glass-effect {
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .bg-gradient-tech {
+                background: linear-gradient(135deg, #165DFF 0%, #722ED1 100%);
+            }
+            .border-glow {
+                box-shadow: 0 0 8px rgba(22, 93, 255, 0.5);
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-dark to-gray-900 min-h-screen font-inter text-light">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- 标题区域 -->
+        <header class="text-center mb-12">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent mb-4 text-shadow">
+                人民币大小写转换工具
+            </h1>
+            <p class="text-gray-400 text-lg max-w-2xl mx-auto">
+                快速将阿拉伯数字金额转换为中文大写金额，支持精确到分，方便财务、合同等场景使用
+            </p>
+        </header>
+
+        <!-- 主内容区域 -->
+        <main class="bg-dark/50 rounded-2xl p-6 md:p-8 glass-effect border border-primary/30 mb-8">
+            <!-- 输入区域 -->
+            <div class="mb-8">
+                <label for="amount" class="block text-gray-300 text-lg font-medium mb-3">
+                    <i class="fa fa-money mr-2"></i>请输入金额（元）
+                </label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                        <i class="fa fa-cny"></i>
+                    </span>
+                    <input 
+                        type="text" 
+                        id="amount" 
+                        class="w-full pl-10 pr-12 py-4 bg-gray-800/70 border border-gray-700 rounded-xl text-white text-xl focus:outline-none focus:border-primary/70 focus:border-glow transition-all duration-300"
+                        placeholder="例如：1234.56"
+                        inputmode="decimal"
+                    >
+                    <button id="clear-btn" class="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-500 hover:text-gray-300 transition-colors">
+                        <i class="fa fa-times-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 转换结果区域 -->
+            <div class="mb-8">
+                <div class="flex justify-between items-center mb-3">
+                    <label class="block text-gray-300 text-lg font-medium">
+                        <i class="fa fa-exchange mr-2"></i>转换结果
+                    </label>
+                    <button id="copy-btn" class="flex items-center text-sm text-primary hover:text-primary/80 transition-colors">
+                        <i class="fa fa-copy mr-1"></i> 复制结果
+                    </button>
+                </div>
+                
+                <!-- 中文大写结果 -->
+                <div class="mb-4">
+                    <div class="text-gray-400 text-sm mb-1">中文大写：</div>
+                    <div id="chinese-result" class="bg-gray-800/70 border border-gray-700 rounded-xl p-4 min-h-[60px] flex items-center text-xl font-medium text-white break-all transition-all duration-300">
+                        <span class="text-gray-500">等待输入金额...</span>
+                    </div>
+                </div>
+                
+                <!-- 格式化数字结果 -->
+                <div>
+                    <div class="text-gray-400 text-sm mb-1">格式化数字：</div>
+                    <div id="formatted-result" class="bg-gray-800/70 border border-gray-700 rounded-xl p-4 min-h-[60px] flex items-center text-xl font-mono text-white break-all transition-all duration-300">
+                        <span class="text-gray-500">等待输入金额...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 转换按钮 -->
+            <div class="text-center">
+                <button id="convert-btn" class="bg-gradient-tech hover:opacity-90 text-white font-bold py-4 px-8 rounded-xl text-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2">
+                    <i class="fa fa-magic mr-2"></i>开始转换
+                </button>
+            </div>
+        </main>
+
+        <!-- 信息卡片 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <div class="bg-dark/30 rounded-xl p-6 border border-gray-800 hover:border-primary/30 transition-all duration-300">
+                <h3 class="text-xl font-semibold text-white mb-3 flex items-center">
+                    <i class="fa fa-info-circle text-primary mr-2"></i>使用说明
+                </h3>
+                <ul class="text-gray-400 space-y-2">
+                    <li class="flex items-start">
+                        <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                        <span>输入需要转换的金额，可以包含小数（最多两位）</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                        <span>点击"开始转换"按钮获取结果</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa fa-check-circle text-secondary mt-1 mr-2"></i>
+                        <span>点击"复制结果"按钮可复制转换后的内容</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="bg-dark/30 rounded-xl p-6 border border-gray-800 hover:border-primary/30 transition-all duration-300">
+                <h3 class="text-xl font-semibold text-white mb-3 flex items-center">
+                    <i class="fa fa-exclamation-triangle text-accent mr-2"></i>注意事项
+                </h3>
+                <ul class="text-gray-400 space-y-2">
+                    <li class="flex items-start">
+                        <i class="fa fa-times-circle text-accent mt-1 mr-2"></i>
+                        <span>输入范围：0.01 ~ 999,999,999,999.99</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa fa-times-circle text-accent mt-1 mr-2"></i>
+                        <span>超过此范围将提示"金额超出可转换范围"</span>
+                    </li>
+                    <li class="flex items-start">
+                        <i class="fa fa-times-circle text-accent mt-1 mr-2"></i>
+                        <span>请输入合法的数字，不支持非数字字符</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="text-center text-gray-500 text-sm">
+            <p>© 2025 人民币大小写转换工具 | 科技感界面设计</p>
+        </footer>
+    </div>
+
+    <!-- 提示消息组件 -->
+    <div id="toast" class="fixed top-4 right-4 bg-dark/80 glass-effect text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 flex items-center z-50">
+        <i id="toast-icon" class="fa fa-check-circle mr-2 text-green-400"></i>
+        <span id="toast-message">操作成功</span>
+    </div>
+
+    <script>
+        // 金额转换函数
+        function convertToChinese(amount) {
+            // 检查金额是否超出范围
+            if (amount <= 0 || amount > 999999999999.99) {
+                return "金额超出可转换范围";
+            }
+            
+            // 分离整数和小数部分
+            const integerPart = Math.floor(amount);
+            const decimalPart = Math.round((amount - integerPart) * 100);
+            
+            // 中文数字和单位
+            const chineseNumbers = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
+            const chineseUnits = ['', '拾', '佰', '仟', '万', '拾', '佰', '仟', '亿', '拾', '佰', '仟', '万'];
+            
+            // 转换整数部分
+            let chineseInteger = '';
+            let integerStr = integerPart.toString();
+            const length = integerStr.length;
+            
+            for (let i = 0; i < length; i++) {
+                const digit = parseInt(integerStr[i]);
+                const position = length - i - 1;
+                
+                if (digit !== 0) {
+                    chineseInteger += chineseNumbers[digit] + chineseUnits[position];
+                } else {
+                    // 处理零的情况
+                    if (position === 4 || position === 8) {
+                        // 万、亿位的零需要保留单位
+                        chineseInteger += chineseUnits[position];
+                    }
+                    
+                    // 避免连续多个零
+                    if (i < length - 1 && parseInt(integerStr[i + 1]) !== 0 && !chineseInteger.endsWith('零')) {
+                        chineseInteger += chineseNumbers[digit];
+                    }
+                }
+            }
+            
+            // 处理整数部分为零的情况
+            if (chineseInteger === '') {
+                chineseInteger = '零';
+            }
+            
+            // 添加"元"
+            chineseInteger += '元';
+            
+            // 处理小数部分
+            let chineseDecimal = '';
+            if (decimalPart === 0) {
+                chineseDecimal = '整';
+            } else {
+                const jiao = Math.floor(decimalPart / 10);
+                const fen = decimalPart % 10;
+                
+                if (jiao !== 0) {
+                    chineseDecimal += chineseNumbers[jiao] + '角';
+                } else if (fen !== 0) {
+                    chineseDecimal += '零';
+                }
+                
+                if (fen !== 0) {
+                    chineseDecimal += chineseNumbers[fen] + '分';
+                }
+            }
+            
+            return chineseInteger + chineseDecimal;
+        }
+
+        // 格式化数字为千分位
+        function formatNumber(number) {
+            if (isNaN(number)) return '';
+            return number.toLocaleString('zh-CN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+        }
+
+        // 显示提示消息
+        function showToast(message, isSuccess = true) {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toast-icon');
+            const toastMessage = document.getElementById('toast-message');
+            
+            // 设置消息内容和图标
+            toastMessage.textContent = message;
+            toastIcon.className = isSuccess ? 'fa fa-check-circle mr-2 text-green-400' : 'fa fa-exclamation-circle mr-2 text-red-400';
+            
+            // 显示提示
+            toast.classList.remove('translate-x-full');
+            
+            // 3秒后隐藏提示
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+            }, 3000);
+        }
+
+        // 转换按钮点击事件
+        document.getElementById('convert-btn').addEventListener('click', function() {
+            const amountInput = document.getElementById('amount');
+            const amountValue = amountInput.value.trim();
+            
+            if (amountValue === '') {
+                showToast('请输入金额', false);
+                return;
+            }
+            
+            // 验证输入是否为合法数字
+            const amount = parseFloat(amountValue);
+            if (isNaN(amount)) {
+                showToast('请输入合法的数字', false);
+                return;
+            }
+            
+            // 验证小数位数
+            if ((amountValue.split('.')[1] || '').length > 2) {
+                showToast('最多只能输入两位小数', false);
+                return;
+            }
+            
+            // 转换并显示结果
+            const chineseResult = convertToChinese(amount);
+            const formattedResult = formatNumber(amount);
+            
+            const chineseResultElement = document.getElementById('chinese-result');
+            const formattedResultElement = document.getElementById('formatted-result');
+            
+            chineseResultElement.innerHTML = chineseResult;
+            formattedResultElement.innerHTML = formattedResult;
+            
+            // 添加动画效果
+            chineseResultElement.classList.add('border-primary/50');
+            formattedResultElement.classList.add('border-primary/50');
+            
+            setTimeout(() => {
+                chineseResultElement.classList.remove('border-primary/50');
+                formattedResultElement.classList.remove('border-primary/50');
+            }, 1000);
+        });
+
+        // 复制按钮点击事件
+        document.getElementById('copy-btn').addEventListener('click', function() {
+            const chineseResult = document.getElementById('chinese-result').textContent;
+            const formattedResult = document.getElementById('formatted-result').textContent;
+            
+            if (chineseResult === '等待输入金额...' || formattedResult === '等待输入金额...') {
+                showToast('没有可复制的结果', false);
+                return;
+            }
+            
+            const textToCopy = `${formattedResult} (${chineseResult})`;
+            
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    showToast('复制成功');
+                })
+                .catch(err => {
+                    showToast('复制失败，请手动复制', false);
+                    console.error('复制失败:', err);
+                });
+        });
+
+        // 清除按钮点击事件
+        document.getElementById('clear-btn').addEventListener('click', function() {
+            document.getElementById('amount').value = '';
+            document.getElementById('chinese-result').innerHTML = '<span class="text-gray-500">等待输入金额...</span>';
+            document.getElementById('formatted-result').innerHTML = '<span class="text-gray-500">等待输入金额...</span>';
+        });
+
+        // 输入框回车事件
+        document.getElementById('amount').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                document.getElementById('convert-btn').click();
+            }
+        });
+    </script>
+</body>
+</html>
+    
