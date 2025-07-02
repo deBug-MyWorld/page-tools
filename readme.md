@@ -7,3 +7,7 @@ snake.html : 贪吃蛇
 parabola.html : 抛物线演示
 
 rmb-converter.html：人民币大小写转换
+
+amtls.html：阿玛特拉斯
+
+confirm.html：申请确认对话框
