@@ -10,4 +10,6 @@ rmb-converter.html：人民币大小写转换
 
 amtls.html：阿玛特拉斯
 
-confirm.html：申请确认对话框
+confirm.html：申请调休确认对话框
+
+tax-calculation.html：计算不含税金额和税额
