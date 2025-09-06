@@ -15,3 +15,5 @@ confirm.html：申请调休确认对话框
 tax-calculation.html：计算不含税金额和税额
 
 pic-show.html: 选择图片文件夹后进行图片展示
+
+wishes.html: 祝福语

@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>祝福词大全 - 传递美好祝愿</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #fff5f5 0%, #ffe6e6 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, #ff7676 0%, #ff4545 100%);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(255, 70, 70, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .floating-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        
+        .heart {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.7);
+            animation: floatHeart 8s linear infinite;
+            font-size: 24px;
+        }
+        
+        @keyframes floatHeart {
+            0% {
+                transform: translateY(100%) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100%) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .description {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .search-container {
+            max-width: 600px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+        
+        .search-box {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            font-size: 1.1rem;
+        }
+        
+        .search-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: #ff7676;
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .search-btn:hover {
+            background: #ff4545;
+            transform: rotate(15deg);
+        }
+        
+        .categories {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+        
+        .category-btn {
+            padding: 15px 30px;
+            background-color: #fff;
+            border: 2px solid #ff7676;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #ff7676;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+        
+        .category-btn:hover, .category-btn.active {
+            background-color: #ff7676;
+            color: white;
+            transform: translateY(-5px);
+        }
+        
+        .blessings-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .blessing-card {
+            background: linear-gradient(135deg, #ffffff 0%, #fff5f5 100%);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            border-left: 5px solid #ff7676;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.5s ease forwards;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .blessing-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(255, 70, 70, 0.2);
+        }
+        
+        .blessing-title {
+            color: #ff4545;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            border-bottom: 2px dashed #ffe0e0;
+            padding-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .blessing-content {
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+        
+        .copy-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #ff7676;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .copy-btn:hover {
+            background-color: #ff4545;
+            transform: scale(1.05);
+        }
+        
+        .copy-btn.copied {
+            background-color: #4caf50;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* 分页样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 10px;
+        }
+        
+        .pagination-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #ff7676;
+            background: white;
+            color: #ff7676;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .pagination-btn:hover {
+            background: #ff7676;
+            color: white;
+        }
+        
+        .pagination-btn.active {
+            background: #ff7676;
+            color: white;
+        }
+        
+        .pagination-ellipsis {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            color: #777;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            padding: 30px;
+            color: #777;
+            font-size: 1rem;
+            border-top: 1px solid #ffe0e0;
+        }
+        
+        .category-icon {
+            font-size: 1.5rem;
+        }
+        
+        .counter {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            color: #ff7676;
+            font-weight: bold;
+        }
+        
+        .page-info {
+            text-align: center;
+            margin-top: 20px;
+            color: #777;
+        }
+        
+        .manual-copy-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1001;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .manual-copy-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .manual-copy-content textarea {
+            width: 100%;
+            height: 120px;
+            margin: 20px 0;
+            padding: 15px;
+            border: 2px solid #ff7676;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            resize: none;
+        }
+        
+        .manual-copy-content button {
+            padding: 12px 25px;
+            background-color: #ff7676;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        
+        .manual-copy-content button:hover {
+            background-color: #ff4545;
+        }
+        
+        @media (max-width: 768px) {
+            .blessings-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .category-btn {
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+            
+            .pagination {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="floating-hearts" id="floating-hearts"></div>
+            <h1>祝福词大全</h1>
+            <p class="description">收录各类场合祝福语，一键复制，传递美好祝愿</p>
+        </header>
+        
+        <div class="search-container">
+            <input type="text" class="search-box" placeholder="搜索祝福语..." id="search-input">
+            <button class="search-btn"><i class="fas fa-search"></i></button>
+        </div>
+        
+        <div class="counter">已收录 <span id="blessing-count">32</span> 条祝福语</div>
+        
+        <div class="categories">
+            <button class="category-btn active" data-category="all">
+                <i class="fas fa-star category-icon"></i>全部祝福
+            </button>
+            <button class="category-btn" data-category="newyear">
+                <i class="fas fa-gift category-icon"></i>新年祝福
+            </button>
+            <button class="category-btn" data-category="wedding">
+                <i class="fas fa-heart category-icon"></i>新婚祝福
+            </button>
+            <button class="category-btn" data-category="dining">
+                <i class="fas fa-utensils category-icon"></i>餐桌礼仪祝福
+            </button>
+            <button class="category-btn" data-category="promotion">
+                <i class="fas fa-chart-line category-icon"></i>升职加薪祝福
+            </button>
+            <button class="category-btn" data-category="birthday">
+                <i class="fas fa-birthday-cake category-icon"></i>生日祝福
+            </button>
+        </div>
+        
+        <div class="blessings-container" id="blessings-container">
+            <!-- 祝福卡片将通过JavaScript动态生成 -->
+        </div>
+        
+        <div class="pagination" id="pagination">
+            <!-- 分页按钮将通过JavaScript动态生成 -->
+        </div>
+        
+        <div class="page-info" id="page-info">
+            显示第 <span id="current-page">1</span> 页，共 <span id="total-pages">1</span> 页
+        </div>
+        
+        <div class="toast" id="toast">
+            <i class="fas fa-check-circle"></i>祝福语已复制到剪贴板
+        </div>
+        
+        <!-- 手动复制模态框 -->
+        <div class="manual-copy-modal" id="manual-copy-modal">
+            <div class="manual-copy-content">
+                <h2>复制祝福语</h2>
+                <p>自动复制失败，请手动复制以下内容：</p>
+                <textarea id="manual-copy-text" readonly></textarea>
+                <button id="close-manual-copy">关闭</button>
+            </div>
+        </div>
+        
+        <footer>
+            <p>祝福词大全 &copy; 2023 - 传递美好祝愿，分享幸福时刻</p>
+        </footer>
+    </div>
+
+    <script>
+        // 祝福语数据
+        const blessingsData = [
+            { id: 1, category: "newyear", title: "新年快乐", icon: "gift", content: "新年到，祝福到！愿你新的一年里身体健康，万事如意，阖家幸福，财源广进！" },
+            { id: 2, category: "newyear", title: "新春大吉", icon: "gift", content: "新春佳节到，向你问个好，愿你事事顺，生活步步高，好运天天交，口味顿顿妙！" },
+            { id: 3, category: "newyear", title: "年年有余", icon: "gift", content: "新年新气象，祝你年年有余，岁岁平安，工作顺利，心想事成！" },
+            { id: 4, category: "newyear", title: "阖家欢乐", icon: "gift", content: "新年到来，愿您阖家欢乐，幸福美满，日子红红火火，事业蒸蒸日上！" },
+            { id: 5, category: "wedding", title: "永结同心", icon: "heart", content: "祝你们永结同心，百年好合！新婚愉快，甜甜蜜蜜！相爱相亲，岁岁年年！" },
+            { id: 6, category: "wedding", title: "天作之合", icon: "heart", content: "天作之合，心心相印，永结同心，相亲相爱，百年好合，永浴爱河，佳偶天成！" },
+            { id: 7, category: "wedding", title: "白头偕老", icon: "heart", content: "愿你们相爱一生，相守一世，白头偕老，永浴爱河！祝新婚快乐！" },
+            { id: 8, category: "wedding", title: "甜蜜美满", icon: "heart", content: "祝你们婚姻甜蜜美满，爱情永恒，携手共度美好人生！" },
+            { id: 9, category: "dining", title: "宴席开场", icon: "utensils", content: "今日大家欢聚一堂，我敬大家一杯，祝各位身体健康，家庭幸福，万事如意！" },
+            { id: 10, category: "dining", title: "团圆饭祝福", icon: "utensils", content: "一家人团聚是最大的幸福，愿我们家庭和睦，幸福美满，日子越过越红火！" },
+            { id: 11, category: "dining", title: "敬酒词", icon: "utensils", content: "美酒倒进白瓷杯，酒到面前你莫推，酒虽不好人情酿，远来的朋友饮一杯。" },
+            { id: 12, category: "dining", title: "饭局开场", icon: "utensils", content: "今天很高兴和大家共聚一堂，我先敬大家一杯，祝各位事业顺利，家庭幸福！" },
+            { id: 13, category: "promotion", title: "步步高升", icon: "chart-line", content: "恭喜高升！愿你步步高升，事业有成，前程似锦，更上一层楼！" },
+            { id: 14, category: "promotion", title: "事业腾达", icon: "chart-line", content: "听到你升职的消息，真是为你高兴！愿你在新的岗位上大展宏图，事业蒸蒸日上！" },
+            { id: 15, category: "promotion", title: "前程似锦", icon: "chart-line", content: "祝贺你升职加薪！愿你前程似锦，事业更上一层楼，人生更加精彩！" },
+            { id: 16, category: "promotion", title: "大展宏图", icon: "chart-line", content: "恭喜升职！愿你在新的职位上大展宏图，创造更加辉煌的成就！" },
+            { id: 17, category: "birthday", title: "生日快乐", icon: "birthday-cake", content: "祝你生日快乐！愿你天天开心，年年有今日，岁岁有今朝，梦想成真！" },
+            { id: 18, category: "birthday", title: "福如东海", icon: "birthday-cake", content: "祝您福如东海长流水，寿比南山不老松！生日快乐，健康长寿！" },
+            { id: 19, category: "birthday", title: "青春永驻", icon: "birthday-cake", content: "祝你生日快乐，愿你青春永驻，笑口常开，幸福每一天！" },
+            { id: 20, category: "birthday", title: "心想事成", icon: "birthday-cake", content: "生日快乐！愿你所有的愿望都能实现，所有的梦想都能成真！" },
+            { id: 21, category: "newyear", title: "吉祥如意", icon: "gift", content: "新年到来，祝你吉祥如意，万事顺心，阖家欢乐，幸福安康！" },
+            { id: 22, category: "newyear", title: "财源广进", icon: "gift", content: "新年快乐！祝你财源广进，事业兴旺，家庭幸福，万事如意！" },
+            { id: 23, category: "wedding", title: "恩爱永恒", icon: "heart", content: "祝你们恩恩爱爱，意笃情深，此生爱情永恒，爱心与日俱增！" },
+            { id: 24, category: "wedding", title: "相濡以沫", icon: "heart", content: "愿你们相濡以沫，相爱一生，幸福美满，永浴爱河！" },
+            { id: 25, category: "dining", title: "酒逢知己", icon: "utensils", content: "酒逢知己千杯少，话不投机大口喝。人生得意须尽欢，这杯我请君喝干！" },
+            { id: 26, category: "dining", title: "相聚是缘", icon: "utensils", content: "今日有缘相聚，我敬大家一杯，祝各位工作顺利，家庭美满！" },
+            { id: 27, category: "promotion", title: "再创辉煌", icon: "chart-line", content: "祝贺你升职！愿你在新的岗位上再创辉煌，取得更大的成就！" },
+            { id: 28, category: "promotion", title: "事业有成", icon: "chart-line", content: "恭喜晋升！愿你事业有成，前程似锦，步步高升，再创佳绩！" },
+            { id: 29, category: "birthday", title: "笑口常开", icon: "birthday-cake", content: "祝你生日快乐，笑口常开，心想事成，幸福永远相伴！" },
+            { id: 30, category: "birthday", title: "健康长寿", icon: "birthday-cake", content: "祝您生日快乐，健康长寿，福星高照，万事如意！" },
+            { id: 31, category: "newyear", title: "幸福安康", icon: "gift", content: "新年到来，祝你幸福安康，阖家欢乐，万事如意，心想事成！" },
+            { id: 32, category: "newyear", title: "瑞气盈门", icon: "gift", content: "新年到，瑞气盈门，祝你事业顺利，家庭幸福，好运连连！" }
+        ];
+
+        // 全局变量
+        let currentPage = 1;
+        const itemsPerPage = 8;
+        let currentCategory = 'all';
+        let currentSearch = '';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 创建漂浮的心形
+            const floatingHearts = document.getElementById('floating-hearts');
+            for (let i = 0; i < 15; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = '<i class="fas fa-heart"></i>';
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDelay = Math.random() * 8 + 's';
+                heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                floatingHearts.appendChild(heart);
+            }
+            
+            // 初始化页面
+            renderBlessings();
+            setupPagination();
+            updateCounter();
+            
+            // 分类筛选功能
+            const categoryButtons = document.querySelectorAll('.category-btn');
+            
+            categoryButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const category = button.getAttribute('data-category');
+                    currentCategory = category;
+                    currentPage = 1;
+                    
+                    // 更新按钮状态
+                    categoryButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    
+                    // 重新渲染
+                    renderBlessings();
+                    setupPagination();
+                    updateCounter();
+                });
+            });
+            
+            // 搜索功能
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('input', () => {
+                currentSearch = searchInput.value.toLowerCase();
+                currentPage = 1;
+                
+                // 重新渲染
+                renderBlessings();
+                setupPagination();
+                updateCounter();
+            });
+            
+            // 关闭手动复制模态框
+            document.getElementById('close-manual-copy').addEventListener('click', function() {
+                document.getElementById('manual-copy-modal').style.display = 'none';
+            });
+        });
+        
+        // 复制文本到剪贴板
+        function copyToClipboard(text) {
+            // 新方法：使用Clipboard API
+            if (navigator.clipboard && window.isSecureContext) {
+                return navigator.clipboard.writeText(text).then(() => {
+                    return true;
+                }).catch(err => {
+                    console.error('Clipboard API failed:', err);
+                    return false;
+                });
+            } else {
+                // 备用方法：使用document.execCommand
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                try {
+                    const successful = document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    return successful;
+                } catch (err) {
+                    console.error('Fallback copy method failed:', err);
+                    document.body.removeChild(textArea);
+                    return false;
+                }
+            }
+        }
+        
+        // 渲染祝福卡片
+        function renderBlessings() {
+            const container = document.getElementById('blessings-container');
+            container.innerHTML = '';
+            
+            // 过滤数据
+            let filteredData = blessingsData;
+            
+            if (currentCategory !== 'all') {
+                filteredData = filteredData.filter(item => item.category === currentCategory);
+            }
+            
+            if (currentSearch) {
+                filteredData = filteredData.filter(item => 
+                    item.title.toLowerCase().includes(currentSearch) || 
+                    item.content.toLowerCase().includes(currentSearch)
+                );
+            }
+            
+            // 计算分页
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, filteredData.length);
+            const currentItems = filteredData.slice(startIndex, endIndex);
+            
+            // 渲染当前页的卡片
+            currentItems.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'blessing-card';
+                card.setAttribute('data-category', item.category);
+                card.style.animationDelay = `${index * 0.1}s`;
+                
+                card.innerHTML = `
+                    <h3 class="blessing-title"><i class="fas fa-${item.icon}"></i>${item.title}</h3>
+                    <p class="blessing-content">${item.content}</p>
+                    <button class="copy-btn" data-content="${item.content}">
+                        <i class="far fa-copy"></i>复制祝福
+                    </button>
+                `;
+                
+                // 添加复制事件监听器
+                const copyBtn = card.querySelector('.copy-btn');
+                copyBtn.addEventListener('click', function() {
+                    const content = this.getAttribute('data-content');
+                    
+                    // 尝试复制到剪贴板
+                    copyToClipboard(content).then(success => {
+                        if (success) {
+                            // 复制成功
+                            const toast = document.getElementById('toast');
+                            toast.style.opacity = 1;
+                            
+                            // 更新按钮状态
+                            this.innerHTML = '<i class="fas fa-check"></i>已复制';
+                            this.classList.add('copied');
+                            
+                            setTimeout(() => {
+                                toast.style.opacity = 0;
+                                this.innerHTML = '<i class="far fa-copy"></i>复制祝福';
+                                this.classList.remove('copied');
+                            }, 2000);
+                        } else {
+                            // 复制失败，显示手动复制模态框
+                            document.getElementById('manual-copy-text').value = content;
+                            document.getElementById('manual-copy-modal').style.display = 'flex';
+                        }
+                    });
+                });
+                
+                container.appendChild(card);
+            });
+            
+            // 更新页面信息
+            document.getElementById('current-page').textContent = currentPage;
+            document.getElementById('total-pages').textContent = totalPages;
+        }
+        
+        // 设置分页
+        function setupPagination() {
+            const paginationContainer = document.getElementById('pagination');
+            paginationContainer.innerHTML = '';
+            
+            // 过滤数据
+            let filteredData = blessingsData;
+            
+            if (currentCategory !== 'all') {
+                filteredData = filteredData.filter(item => item.category === currentCategory);
+            }
+            
+            if (currentSearch) {
+                filteredData = filteredData.filter(item => 
+                    item.title.toLowerCase().includes(currentSearch) || 
+                    item.content.toLowerCase().includes(currentSearch)
+                );
+            }
+            
+            const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+            
+            if (totalPages <= 1) {
+                return;
+            }
+            
+            // 添加上一页按钮
+            const prevButton = document.createElement('button');
+            prevButton.className = 'pagination-btn';
+            prevButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderBlessings();
+                    setupPagination();
+                }
+            });
+            paginationContainer.appendChild(prevButton);
+            
+            // 添加页码按钮
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+            
+            if (endPage - startPage + 1 < maxVisiblePages) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            if (startPage > 1) {
+                const firstPageButton = document.createElement('button');
+                firstPageButton.className = 'pagination-btn';
+                firstPageButton.textContent = '1';
+                firstPageButton.addEventListener('click', () => {
+                    currentPage = 1;
+                    renderBlessings();
+                    setupPagination();
+                });
+                paginationContainer.appendChild(firstPageButton);
+                
+                if (startPage > 2) {
+                    const ellipsis = document.createElement('div');
+                    ellipsis.className = 'pagination-ellipsis';
+                    ellipsis.textContent = '...';
+                    paginationContainer.appendChild(ellipsis);
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.className = 'pagination-btn';
+                if (i === currentPage) {
+                    pageButton.classList.add('active');
+                }
+                pageButton.textContent = i;
+                pageButton.addEventListener('click', () => {
+                    currentPage = i;
+                    renderBlessings();
+                    setupPagination();
+                });
+                paginationContainer.appendChild(pageButton);
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const ellipsis = document.createElement('div');
+                    ellipsis.className = 'pagination-ellipsis';
+                    ellipsis.textContent = '...';
+                    paginationContainer.appendChild(ellipsis);
+                }
+                
+                const lastPageButton = document.createElement('button');
+                lastPageButton.className = 'pagination-btn';
+                lastPageButton.textContent = totalPages;
+                lastPageButton.addEventListener('click', () => {
+                    currentPage = totalPages;
+                    renderBlessings();
+                    setupPagination();
+                });
+                paginationContainer.appendChild(lastPageButton);
+            }
+            
+            // 添加下一页按钮
+            const nextButton = document.createElement('button');
+            nextButton.className = 'pagination-btn';
+            nextButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderBlessings();
+                    setupPagination();
+                }
+            });
+            paginationContainer.appendChild(nextButton);
+        }
+        
+        // 更新计数器
+        function updateCounter() {
+            let filteredData = blessingsData;
+            
+            if (currentCategory !== 'all') {
+                filteredData = filteredData.filter(item => item.category === currentCategory);
+            }
+            
+            if (currentSearch) {
+                filteredData = filteredData.filter(item => 
+                    item.title.toLowerCase().includes(currentSearch) || 
+                    item.content.toLowerCase().includes(currentSearch)
+                );
+            }
+            
+            document.getElementById('blessing-count').textContent = filteredData.length;
+        }
+    </script>
+</body>
+</html>
