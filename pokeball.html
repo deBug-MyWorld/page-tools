@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js 3D 精灵球</title>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #1a1a1a; font-family: sans-serif; }
+        #info {
+            position: absolute;
+            top: 20px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            pointer-events: none;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+        #canvas-container { width: 100%; height: 100vh; }
+    </style>
+</head>
+<body>
+    <div id="info">点击屏幕触发捕捉动画 (Click to Capture)</div>
+    <div id="canvas-container"></div>
+
+    <!-- 引入 Three.js 和 TWEEN.js (用于动画) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+
+    <script>
+        // --- 初始化场景 ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1a1a1a);
+        // 添加一点雾气增加深度感
+        scene.fog = new THREE.Fog(0x1a1a1a, 20, 50);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.set(0, 5, 25);
+        camera.lookAt(0, 0, 0);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // --- 材质定义 ---
+        // 红色外壳 (高光塑料感)
+        const redMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0xE63333,
+            metalness: 0.1,
+            roughness: 0.1,
+            clearcoat: 1.0,
+            clearcoatRoughness: 0.1,
+        });
+
+        // 白色外壳
+        const whiteMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0xffffff,
+            metalness: 0.1,
+            roughness: 0.1,
+            clearcoat: 1.0,
+            clearcoatRoughness: 0.1,
+        });
+
+        // 黑色部分 (橡胶/哑光质感)
+        const blackMaterial = new THREE.MeshStandardMaterial({
+            color: 0x111111,
+            roughness: 0.5,
+            metalness: 0.5,
+        });
+
+        // 按钮发光材质
+        const glowMaterial = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            emissive: 0xaa0000, // 初始暗淡
+            emissiveIntensity: 0,
+            roughness: 0.2,
+            metalness: 0.8
+        });
+
+        // --- 构建精灵球几何体 ---
+        const pokeBallGroup = new THREE.Group();
+        const radius = 5;
+        const segments = 64;
+        const gap = 0.15; // 上下半球之间的缝隙大小
+
+        // 1. 红色上半球 (使用 thetaLength 切割球体)
+        const topGeo = new THREE.SphereGeometry(
+            radius, segments, segments, 
+            0, Math.PI * 2, 
+            0, Math.PI / 2 - gap
+        );
+        const topMesh = new THREE.Mesh(topGeo, redMaterial);
+        topMesh.castShadow = true;
+        topMesh.receiveShadow = true;
+        pokeBallGroup.add(topMesh);
+
+        // 1.1 上半球切面封口 (为了美观，增加内部厚度感，这里用简单的黑色圆环或球体填充即可，
+        // 但为了性能和简单，我们用一个略小的黑色球体做内芯)
+
+        // 2. 白色下半球
+        const bottomGeo = new THREE.SphereGeometry(
+            radius, segments, segments, 
+            0, Math.PI * 2, 
+            Math.PI / 2 + gap, Math.PI / 2 - gap
+        );
+        const bottomMesh = new THREE.Mesh(bottomGeo, whiteMaterial);
+        bottomMesh.castShadow = true;
+        bottomMesh.receiveShadow = true;
+        pokeBallGroup.add(bottomMesh);
+
+        // 3. 黑色内核 (填充缝隙，形成黑色条带)
+        const coreGeo = new THREE.SphereGeometry(radius * 0.98, segments, segments); // 稍微小一点点
+        const coreMesh = new THREE.Mesh(coreGeo, blackMaterial);
+        coreMesh.castShadow = true;
+        pokeBallGroup.add(coreMesh);
+
+        // 4. 按钮结构组
+        const buttonGroup = new THREE.Group();
+        // 旋转按钮组使其朝向 Z 轴正方向
+        buttonGroup.rotation.x = Math.PI / 2; 
+        // 将按钮组定位到球体表面
+        buttonGroup.position.z = radius; 
+
+        // 4.1 按钮底座 (黑色外圈) - 使用圆柱体
+        const buttonBaseGeo = new THREE.CylinderGeometry(1.4, 1.4, 1.0, 32);
+        const buttonBase = new THREE.Mesh(buttonBaseGeo, blackMaterial);
+        // 调整位置和旋转以贴合球面
+        buttonBase.rotation.x = Math.PI / 2; 
+        buttonBase.position.z = radius - 0.5; // 稍微嵌入
+        pokeBallGroup.add(buttonBase);
+
+        // 4.2 按钮中心 (白色可发光部分)
+        const buttonInnerGeo = new THREE.CylinderGeometry(0.9, 0.9, 1.1, 32);
+        const buttonInner = new THREE.Mesh(buttonInnerGeo, glowMaterial);
+        buttonInner.rotation.x = Math.PI / 2;
+        buttonInner.position.z = radius - 0.5;
+        buttonInner.name = "action_button"; // 标记用于后续操作
+        pokeBallGroup.add(buttonInner);
+
+        scene.add(pokeBallGroup);
+
+        // --- 地面 ---
+        const floorGeo = new THREE.PlaneGeometry(50, 50);
+        const floorMat = new THREE.MeshStandardMaterial({ 
+            color: 0x1a1a1a, 
+            roughness: 0.8, 
+            metalness: 0.2 
+        });
+        const floor = new THREE.Mesh(floorGeo, floorMat);
+        floor.rotation.x = -Math.PI / 2;
+        floor.position.y = -radius - 0.5; // 在球体下方
+        floor.receiveShadow = true;
+        scene.add(floor);
+
+        // --- 灯光 ---
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        scene.add(ambientLight);
+
+        // 主光源 (模拟阳光)
+        const mainLight = new THREE.DirectionalLight(0xffffff, 1.2);
+        mainLight.position.set(10, 20, 10);
+        mainLight.castShadow = true;
+        mainLight.shadow.mapSize.width = 2048;
+        mainLight.shadow.mapSize.height = 2048;
+        mainLight.shadow.bias = -0.0001;
+        scene.add(mainLight);
+
+        // 补光 (蓝色边缘光)
+        const rimLight = new THREE.SpotLight(0x0044ff, 2.0);
+        rimLight.position.set(-20, 10, -10);
+        rimLight.lookAt(0, 0, 0);
+        scene.add(rimLight);
+
+        // --- 动画状态 ---
+        let isAnimating = false;
+
+        // --- 事件监听 ---
+        window.addEventListener('resize', onWindowResize, false);
+        window.addEventListener('mousedown', triggerWobble);
+        window.addEventListener('touchstart', triggerWobble);
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // 触发摇晃动画 (Wobble)
+        function triggerWobble() {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            // 1. 重置旋转
+            // 先快速旋转到正面
+            new TWEEN.Tween(pokeBallGroup.rotation)
+                .to({ x: 0, y: 0, z: 0 }, 300)
+                .easing(TWEEN.Easing.Quadratic.Out)
+                .onComplete(() => {
+                    startShakeSequence();
+                })
+                .start();
+        }
+
+        function startShakeSequence() {
+            // 经典的捕捉三摇
+            const shakeAmount = 0.5; // 弧度
+            const duration = 300; // 每次摇晃的时间
+
+            // 摇晃动画链
+            const tweenLeft1 = new TWEEN.Tween(pokeBallGroup.rotation).to({ z: shakeAmount }, duration).easing(TWEEN.Easing.Cubic.InOut);
+            const tweenRight1 = new TWEEN.Tween(pokeBallGroup.rotation).to({ z: -shakeAmount }, duration * 2).easing(TWEEN.Easing.Cubic.InOut);
+            const tweenLeft2 = new TWEEN.Tween(pokeBallGroup.rotation).to({ z: shakeAmount * 0.6 }, duration * 1.5).easing(TWEEN.Easing.Cubic.InOut);
+            const tweenRight2 = new TWEEN.Tween(pokeBallGroup.rotation).to({ z: 0 }, duration).easing(TWEEN.Easing.Back.Out);
+
+            // 按钮发光动画
+            const lightOn = new TWEEN.Tween(glowMaterial.emissive).to({ r: 1, g: 0.2, b: 0.2 }, 100);
+            const lightOff = new TWEEN.Tween(glowMaterial.emissive).to({ r: 0, g: 0, b: 0 }, 300);
+
+            // 串联动画
+            tweenLeft1.chain(tweenRight1);
+            tweenRight1.chain(tweenLeft2);
+            tweenLeft2.chain(tweenRight2);
+            
+            // 成功后的发光
+            tweenRight2.onComplete(() => {
+                // 模拟成功捕捉：按钮闪烁
+                glowMaterial.emissive.setHex(0xaa0000); // 红光
+                glowMaterial.emissiveIntensity = 1;
+                
+                // 简单的闪烁效果
+                let flashCount = 0;
+                const flashInterval = setInterval(() => {
+                    glowMaterial.emissiveIntensity = glowMaterial.emissiveIntensity > 0.5 ? 0 : 1;
+                    flashCount++;
+                    if(flashCount > 5) {
+                        clearInterval(flashInterval);
+                        glowMaterial.emissiveIntensity = 0;
+                        isAnimating = false;
+                    }
+                }, 200);
+            });
+
+            tweenLeft1.start();
+        }
+
+        // --- 渲染循环 ---
+        function animate(time) {
+            requestAnimationFrame(animate);
+
+            TWEEN.update(time);
+
+            // 闲置时的轻微悬浮和旋转
+            if (!isAnimating) {
+                pokeBallGroup.rotation.y += 0.01; // 持续自转
+                pokeBallGroup.position.y = Math.sin(time * 0.002) * 0.5; // 上下悬浮
+            }
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+    </script>
+</body>
+</html>

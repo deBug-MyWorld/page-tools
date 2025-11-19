@@ -17,3 +17,7 @@ tax-calculation.html：计算不含税金额和税额
 pic-show.html: 选择图片文件夹后进行图片展示
 
 wishes.html: 祝福语
+
+pokeball.html: 精灵球
+
+earth.html：3D地球
