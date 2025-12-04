@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gesture Heart Gallery</title>
+    <!-- Tailwind CSS for UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MediaPipe Hands & Camera Utils -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #050505;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        #canvas-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        canvas {
+            display: block;
+            transform: scaleX(-1); /* Mirror effect for natural interaction */
+        }
+
+        #video-element {
+            display: none; /* Hide the raw video feed */
+        }
+
+        /* UI Overlay */
+        #ui-layer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            transition: opacity 0.3s;
+        }
+
+        #ui-layer:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .hidden-input {
+            display: none;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ff4d4d, #c70039);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 77, 77, 0.6);
+        }
+
+        #status {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #ddd;
+        }
+
+        #preview-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            text-align: center;
+        }
+
+        #preview-img {
+            max-width: 80vw;
+            max-height: 80vh;
+            border-radius: 12px;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            border: 4px solid white;
+        }
+
+        /* Loading Spinner */
+        .loader {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #fff;
+            width: 20px;
+            height: 20px;
+            -webkit-animation: spin 1s linear infinite; /* Safari */
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container">
+        <video id="video-element"></video>
+        <canvas id="output-canvas"></canvas>
+        
+        <!-- UI Controls -->
+        <div id="ui-layer">
+            <h1 class="text-xl font-bold mb-2">❤️ 交互式爱心相册</h1>
+            <p class="text-xs text-gray-300 mb-4">
+                1. 握拳: 聚合成爱心<br>
+                2. 张手: 展开照片墙<br>
+                3. 食指: 悬停查看照片
+            </p>
+            
+            <input type="file" id="folder-input" class="hidden-input" webkitdirectory directory multiple accept="image/*">
+            <button class="btn" onclick="document.getElementById('folder-input').click()">
+                📂 选择照片文件夹 / 图片
+            </button>
+            <div id="status">
+                <div class="loader" id="loader"></div>
+                <span id="status-text">等待导入照片... (或者直接玩)</span>
+            </div>
+        </div>
+
+        <!-- Big Preview Overlay -->
+        <div id="preview-overlay">
+            <img id="preview-img" src="" alt="Preview">
+        </div>
+    </div>
+
+    <script>
+        // --- Configuration & State ---
+        const config = {
+            particleCount: 150, // Total particles (will increase if images loaded)
+            heartScale: 15,
+            heartColor: '#ff3366',
+            glowColor: '#ff0044',
+            hoverThreshold: 500, // ms to trigger preview
+            cursorSize: 15
+        };
+
+        const state = {
+            mode: 'HEART', // 'HEART' or 'GALLERY'
+            handDetected: false,
+            indexFinger: { x: 0, y: 0 },
+            hoveredIndex: -1,
+            hoverStartTime: 0,
+            images: [], // Stores Image objects
+            particles: []
+        };
+
+        // --- Elements ---
+        const videoElement = document.getElementById('video-element');
+        const canvasElement = document.getElementById('output-canvas');
+        const canvasCtx = canvasElement.getContext('2d');
+        const fileInput = document.getElementById('folder-input');
+        const statusText = document.getElementById('status-text');
+        const loader = document.getElementById('loader');
+        const previewOverlay = document.getElementById('preview-overlay');
+        const previewImg = document.getElementById('preview-img');
+
+        // Resize Canvas
+        function resizeCanvas() {
+            canvasElement.width = window.innerWidth;
+            canvasElement.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // --- Image Loading ---
+        fileInput.addEventListener('change', async (e) => {
+            const files = Array.from(e.target.files).filter(f => f.type.startsWith('image/'));
+            if (files.length === 0) return;
+
+            statusText.textContent = `正在加载 ${files.length} 张图片...`;
+            loader.style.display = 'inline-block';
+
+            state.images = [];
+            
+            // Limit to protect performance, e.g., max 100 images
+            const maxImages = Math.min(files.length, 200);
+            let loadedCount = 0;
+
+            for (let i = 0; i < maxImages; i++) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        state.images.push(img);
+                        loadedCount++;
+                        if (loadedCount === maxImages) {
+                            finishLoading();
+                        }
+                    };
+                };
+                reader.readAsDataURL(files[i]);
+            }
+        });
+
+        function finishLoading() {
+            loader.style.display = 'none';
+            statusText.textContent = `已加载 ${state.images.length} 张图片。试着张开手！`;
+            initParticles(); // Re-init to match image count
+        }
+
+        // --- Particle System ---
+        class Particle {
+            constructor(index) {
+                this.index = index;
+                this.x = Math.random() * canvasElement.width;
+                this.y = Math.random() * canvasElement.height;
+                this.tx = this.x; // Target X
+                this.ty = this.y; // Target Y
+                this.vx = 0;
+                this.vy = 0;
+                this.size = 0; // Dynamic size
+                this.color = config.heartColor;
+                this.image = null; // Associated image
+                this.angle = Math.random() * Math.PI * 2;
+            }
+
+            update(targetMode, time) {
+                // Determine Target Position based on Mode
+                if (targetMode === 'HEART') {
+                    // Parametric Heart Equation
+                    // x = 16sin^3(t)
+                    // y = 13cos(t) - 5cos(2t) - 2cos(3t) - cos(4t)
+                    
+                    // Spread particles along the heart curve + some fill
+                    // We use the index to determine position along perimeter or inside
+                    const t = (this.index / state.particles.length) * Math.PI * 2;
+                    
+                    // Add a beating effect
+                    const beat = 1 + 0.05 * Math.sin(time * 0.005);
+                    const scale = config.heartScale * beat;
+
+                    // Base heart shape
+                    let hx = 16 * Math.pow(Math.sin(t), 3);
+                    let hy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+
+                    // Add some randomness to fill the heart (if not edge)
+                    if (this.index % 5 !== 0) {
+                        hx *= Math.random();
+                        hy *= Math.random();
+                    }
+
+                    this.tx = (canvasElement.width / 2) + hx * scale;
+                    this.ty = (canvasElement.height / 2) + hy * scale;
+                    
+                    this.targetSize = 3;
+                    this.color = config.heartColor;
+                } else {
+                    // GALLERY MODE (Grid Layout)
+                    const cols = Math.ceil(Math.sqrt(state.particles.length * (canvasElement.width / canvasElement.height)));
+                    const rows = Math.ceil(state.particles.length / cols);
+                    
+                    const padding = 10;
+                    const cellW = (canvasElement.width - padding * 2) / cols;
+                    const cellH = (canvasElement.height - padding * 2) / rows;
+                    
+                    // Maintain aspect ratio for cells approx
+                    const aspect = 1; 
+
+                    const col = this.index % cols;
+                    const row = Math.floor(this.index / cols);
+
+                    this.tx = padding + col * cellW + cellW / 2;
+                    this.ty = padding + row * cellH + cellH / 2;
+                    
+                    // Use larger size for gallery tiles
+                    this.targetSize = Math.min(cellW, cellH) * 0.8;
+                }
+
+                // Physics (Ease to target)
+                const dx = this.tx - this.x;
+                const dy = this.ty - this.y;
+                
+                this.x += dx * 0.1;
+                this.y += dy * 0.1;
+                
+                // Size lerp
+                this.size += (this.targetSize - this.size) * 0.1;
+
+                // Assign Image if available
+                if (state.images.length > 0) {
+                    this.image = state.images[this.index % state.images.length];
+                }
+            }
+
+            draw(ctx) {
+                if (state.mode === 'GALLERY' && this.image) {
+                    // Draw Image
+                    // Calculate dimensions to fit in the square size
+                    try {
+                        const ratio = this.image.width / this.image.height;
+                        let drawW = this.size;
+                        let drawH = this.size;
+                        if (ratio > 1) drawH = drawW / ratio;
+                        else drawW = drawH * ratio;
+
+                        ctx.save();
+                        // Add glow if needed or simple shadow
+                        ctx.shadowBlur = 0;
+                        ctx.drawImage(this.image, this.x - drawW/2, this.y - drawH/2, drawW, drawH);
+                        ctx.restore();
+                    } catch (e) {
+                        // Fallback if image fails
+                        this.drawCircle(ctx);
+                    }
+                } else {
+                    this.drawCircle(ctx);
+                }
+            }
+
+            drawCircle(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, state.mode === 'HEART' ? 3 : this.size/2, 0, Math.PI * 2);
+                
+                if (state.mode === 'HEART') {
+                    // Glowing edge logic in main draw loop, here just base color
+                    ctx.fillStyle = `rgba(255, 50, 100, ${Math.random() * 0.5 + 0.5})`;
+                } else {
+                    // Rainbow gallery placeholder if no images
+                    const hue = (this.index * 10) % 360;
+                    ctx.fillStyle = `hsl(${hue}, 70%, 60%)`;
+                }
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            state.particles = [];
+            // If images are loaded, ensure we have at least one particle per image
+            // If no images, default to config count
+            const count = state.images.length > 0 ? Math.max(state.images.length, config.particleCount) : config.particleCount;
+            
+            for (let i = 0; i < count; i++) {
+                state.particles.push(new Particle(i));
+            }
+        }
+
+        initParticles();
+
+        // --- Logic & Interaction ---
+        
+        function checkGestures(landmarks) {
+            // Landmarks: 
+            // 0: Wrist
+            // 8: Index Tip
+            // 12: Middle Tip, etc.
+            
+            // 1. Detect Open Palm vs Fist
+            // Simple logic: Is tip of finger higher (lower Y value) than the PIP joint?
+            // Note: In MediaPipe, Y increases downwards.
+            
+            const fingers = [8, 12, 16, 20]; // Index, Middle, Ring, Pinky tips
+            const pips = [6, 10, 14, 18];   // Corresponding PIP joints
+            
+            let extendedCount = 0;
+            // Thumb logic (check x distance relative to wrist/MCP)
+            // Simplified: just check 4 fingers for fist vs open
+            
+            for (let i = 0; i < fingers.length; i++) {
+                // If tip is above PIP (smaller y)
+                // Calculate distance to wrist (0)
+                const tip = landmarks[fingers[i]];
+                const wrist = landmarks[0];
+                const pip = landmarks[pips[i]];
+                
+                // Distance check is more robust against rotation
+                const dTip = Math.hypot(tip.x - wrist.x, tip.y - wrist.y);
+                const dPip = Math.hypot(pip.x - wrist.x, pip.y - wrist.y);
+                
+                if (dTip > dPip * 1.2) extendedCount++;
+            }
+
+            // State Transition
+            if (extendedCount >= 3) {
+                state.mode = 'GALLERY';
+            } else if (extendedCount <= 1) {
+                state.mode = 'HEART';
+                // Hide preview immediately when forming heart
+                previewOverlay.style.opacity = 0;
+                state.hoveredIndex = -1;
+            }
+
+            // 2. Track Index Finger (Landmark 8)
+            // Need to map normalized coordinates (0-1) to canvas size.
+            // Note: Canvas is mirrored via CSS, but coordinates come in normalized relative to video.
+            // We need to flip X coordinate for logic to match visual mirror.
+            state.indexFinger.x = (1 - landmarks[8].x) * canvasElement.width;
+            state.indexFinger.y = landmarks[8].y * canvasElement.height;
+        }
+
+        function handleInteraction() {
+            if (state.mode !== 'GALLERY') return;
+            if (!state.handDetected) return;
+
+            let foundHover = false;
+
+            // Check collision with particles (images)
+            // Reverse loop to check top-most items first (though z-index isn't really simulated)
+            for (let i = 0; i < state.particles.length; i++) {
+                const p = state.particles[i];
+                const dx = state.indexFinger.x - p.x;
+                const dy = state.indexFinger.y - p.y;
+                // Hitbox based on particle size
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                
+                if (dist < p.size / 2 + 10) { // +10 padding
+                    foundHover = true;
+                    
+                    if (state.hoveredIndex !== i) {
+                        // New hover
+                        state.hoveredIndex = i;
+                        state.hoverStartTime = Date.now();
+                        // Optional: Highlight effect on particle immediately
+                        p.size = p.targetSize * 1.2;
+                    } else {
+                        // Continuing hover
+                        // Check time
+                        if (Date.now() - state.hoverStartTime > config.hoverThreshold) {
+                            showPreview(i);
+                        }
+                    }
+                } else {
+                    // Reset size if not hovered
+                    // p.size will lerp back to targetSize naturally in update()
+                }
+            }
+
+            if (!foundHover) {
+                state.hoveredIndex = -1;
+                previewOverlay.style.opacity = 0;
+            }
+        }
+
+        function showPreview(index) {
+            const p = state.particles[index];
+            if (p.image) {
+                previewImg.src = p.image.src;
+                previewOverlay.style.opacity = 1;
+            } else {
+                // No image loaded
+            }
+        }
+
+        // --- Main Loop ---
+        function animate() {
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            const time = Date.now();
+
+            // 1. Update & Draw Particles
+            // Heart Glow Effect
+            if (state.mode === 'HEART') {
+                canvasCtx.shadowBlur = 20;
+                canvasCtx.shadowColor = config.glowColor;
+            } else {
+                canvasCtx.shadowBlur = 0;
+            }
+
+            state.particles.forEach(p => {
+                p.update(state.mode, time);
+                p.draw(canvasCtx);
+            });
+
+            // 2. Draw Cursor (Index Finger)
+            if (state.handDetected && state.mode === 'GALLERY') {
+                canvasCtx.shadowBlur = 10;
+                canvasCtx.shadowColor = 'white';
+                canvasCtx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+                canvasCtx.beginPath();
+                canvasCtx.arc(state.indexFinger.x, state.indexFinger.y, config.cursorSize, 0, Math.PI * 2);
+                canvasCtx.fill();
+                
+                // Loading ring around cursor if hovering
+                if (state.hoveredIndex !== -1) {
+                    const elapsed = Date.now() - state.hoverStartTime;
+                    const progress = Math.min(elapsed / config.hoverThreshold, 1);
+                    
+                    canvasCtx.strokeStyle = '#00ff00';
+                    canvasCtx.lineWidth = 3;
+                    canvasCtx.beginPath();
+                    canvasCtx.arc(state.indexFinger.x, state.indexFinger.y, config.cursorSize + 5, -Math.PI/2, (-Math.PI/2) + (Math.PI * 2 * progress));
+                    canvasCtx.stroke();
+                }
+            }
+
+            // 3. Draw instructions if no hand
+            if (!state.handDetected) {
+                canvasCtx.shadowBlur = 0;
+                canvasCtx.fillStyle = "rgba(255, 255, 255, 0.5)";
+                canvasCtx.font = "20px Arial";
+                canvasCtx.textAlign = "center";
+                canvasCtx.fillText("请在摄像头前举起手...", canvasElement.width / 2, canvasElement.height - 50);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // --- MediaPipe Setup ---
+        const hands = new Hands({locateFile: (file) => {
+            return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+        }});
+
+        hands.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+        });
+
+        hands.onResults((results) => {
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                state.handDetected = true;
+                const landmarks = results.multiHandLandmarks[0];
+                
+                checkGestures(landmarks);
+                handleInteraction();
+            } else {
+                state.handDetected = false;
+            }
+        });
+
+        const camera = new Camera(videoElement, {
+            onFrame: async () => {
+                await hands.send({image: videoElement});
+            },
+            width: 1280,
+            height: 720
+        });
+
+        // Start everything
+        camera.start();
+        animate();
+
+    </script>
+</body>
+</html>

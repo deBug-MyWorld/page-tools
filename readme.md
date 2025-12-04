@@ -21,3 +21,5 @@ wishes.html: 祝福语
 pokeball.html: 精灵球
 
 earth.html：3D地球
+
+gesture-pic.html：手势控制相册
