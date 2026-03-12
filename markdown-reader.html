@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Markdown 预览与管理</title>
+    
+    <!-- 动态主题 CSS 链接 (初始加载亮色) -->
+    <link id="theme-css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.3.0/github-markdown-light.min.css">
+    
+    <!-- 引入 marked.js 用于解析 Markdown -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/10.0.0/marked.min.js"></script>
+
+    <style>
+        /* CSS 变量：用于控制外部页面的亮/暗颜色 */
+        :root {
+            --bg-color: #f6f8fa;
+            --header-bg: #ffffff;
+            --text-color: #24292f;
+            --border-color: #d0d7de;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --content-bg: #ffffff;
+        }
+
+        body.dark-mode {
+            --bg-color: #010409;
+            --header-bg: #161b22;
+            --text-color: #c9d1d9;
+            --border-color: #30363d;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            --content-bg: #0d1117;
+        }
+
+        body {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* 顶部导航控制栏 */
+        .controls-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .controls-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* 自定义下拉框及动画特效样式 */
+        .custom-dropdown {
+            position: relative;
+            width: 260px;
+        }
+
+        .dropdown-header {
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: var(--header-bg);
+            color: var(--text-color);
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .dropdown-header:hover {
+            border-color: #8c959f;
+        }
+
+        .dropdown-header .arrow {
+            font-size: 10px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .custom-dropdown.open .dropdown-header .arrow {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-list-container {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background-color: var(--header-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-top: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px) scale(0.95);
+            transform-origin: top;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 200;
+        }
+
+        body.dark-mode .dropdown-list-container {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.7);
+        }
+
+        .custom-dropdown.open .dropdown-list-container {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .search-box {
+            padding: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 6px 10px;
+            box-sizing: border-box;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            outline: none;
+            font-size: 13px;
+            transition: border-color 0.2s;
+        }
+        
+        .search-box input:focus {
+            border-color: #0969da;
+        }
+
+        .file-list {
+            list-style: none;
+            margin: 0;
+            padding: 5px 0;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .file-list li {
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-color);
+            transition: background-color 0.2s, padding-left 0.2s;
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-list li:hover {
+            background-color: var(--bg-color);
+            padding-left: 20px; /* 悬浮滑动小特效 */
+            color: #0969da;
+        }
+        
+        body.dark-mode .file-list li:hover {
+            color: #58a6ff;
+        }
+
+        .file-list .no-results {
+            padding: 10px 15px;
+            color: #8c959f;
+            text-align: center;
+            cursor: default;
+        }
+        
+        .file-list .no-results:hover {
+            background-color: transparent;
+            padding-left: 15px;
+            color: #8c959f;
+        }
+
+        button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid var(--border-color);
+            background-color: transparent;
+            color: var(--text-color);
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background-color: rgba(128, 128, 128, 0.1);
+        }
+
+        /* 布局容器 */
+        .main-container {
+            max-width: 980px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* 文档容器样式 */
+        .markdown-body {
+            background-color: var(--content-bg) !important;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s, box-shadow 0.3s, border-color 0.3s;
+        }
+
+        /* 移动端适配 */
+        @media (max-width: 767px) {
+            .controls-header {
+                flex-direction: column;
+                gap: 10px;
+                padding: 15px;
+            }
+            .controls-left {
+                width: 100%;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .custom-dropdown {
+                width: 100%;
+            }
+            .main-container {
+                margin: 20px auto;
+                padding: 0 10px;
+            }
+            .markdown-body {
+                padding: 20px;
+            }
+        }
+
+        .status-message { text-align: center; color: #8c959f; padding: 40px; }
+        .error-message { color: #cf222e; padding: 20px; border-radius: 6px; border: 1px solid #ff8182; background: rgba(255, 129, 130, 0.1); }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部控制栏 -->
+    <header class="controls-header">
+        <div class="controls-left">
+            <strong>📁 文档列表:</strong>
+            <div class="custom-dropdown" id="custom-dropdown">
+                <div class="dropdown-header" id="dropdown-header">
+                    <span id="selected-file-name">选择文档...</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="dropdown-list-container">
+                    <div class="search-box">
+                        <input type="text" id="file-search" placeholder="🔍 模糊搜索文档名称..." autocomplete="off">
+                    </div>
+                    <ul class="file-list" id="file-list">
+                        <!-- 选项将由 JS 动态生成 -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div>
+            <button id="theme-toggle">🌙 切换暗色</button>
+        </div>
+    </header>
+
+    <!-- 主体内容 -->
+    <div class="main-container">
+        <div id="content" class="markdown-body">
+            <div class="status-message">正在加载文档内容...</div>
+        </div>
+    </div>
+
+    <script>
+        /* =========================================
+           1. 文件列表配置 (如果新增文件，请在这里添加)
+           ========================================= */
+        const fileConfig = [
+            { name: "🎉 欢迎与测试 (sample.md)", path: "data/sample.md" },
+            { name: "📄 ruoyi-vue脚手架改造", path: "data/ruoyi-vue脚手架改造-数据权限.md" }
+        ];
+
+        /* =========================================
+           2. DOM 元素获取
+           ========================================= */
+        const customDropdown = document.getElementById('custom-dropdown');
+        const dropdownHeader = document.getElementById('dropdown-header');
+        const selectedFileName = document.getElementById('selected-file-name');
+        const fileSearchInput = document.getElementById('file-search');
+        const fileListElement = document.getElementById('file-list');
+        
+        const contentDiv = document.getElementById('content');
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const themeCssLink = document.getElementById('theme-css');
+
+        /* =========================================
+           3. 主题切换逻辑
+           ========================================= */
+        let currentTheme = localStorage.getItem('md-theme') || 'light';
+
+        function applyTheme(theme) {
+            if (theme === 'dark') {
+                themeCssLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.3.0/github-markdown-dark.min.css';
+                document.body.classList.add('dark-mode');
+                themeToggleBtn.innerText = '☀️ 切换亮色';
+            } else {
+                themeCssLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.3.0/github-markdown-light.min.css';
+                document.body.classList.remove('dark-mode');
+                themeToggleBtn.innerText = '🌙 切换暗色';
+            }
+            localStorage.setItem('md-theme', theme);
+            currentTheme = theme;
+        }
+
+        // 初始化主题
+        applyTheme(currentTheme);
+
+        // 绑定主题切换按钮事件
+        themeToggleBtn.addEventListener('click', () => {
+            applyTheme(currentTheme === 'light' ? 'dark' : 'light');
+        });
+
+        /* =========================================
+           4. 文件渲染逻辑
+           ========================================= */
+        // 渲染下拉列表项目 (支持搜索过滤)
+        function renderFileList(searchText = "") {
+            fileListElement.innerHTML = '';
+            const lowerSearchText = searchText.toLowerCase();
+            
+            // 模糊过滤
+            const filteredFiles = fileConfig.filter(file => 
+                file.name.toLowerCase().includes(lowerSearchText)
+            );
+
+            if (filteredFiles.length === 0) {
+                const li = document.createElement('li');
+                li.className = 'no-results';
+                li.textContent = '没有找到匹配的文档';
+                fileListElement.appendChild(li);
+                return;
+            }
+
+            filteredFiles.forEach(file => {
+                const li = document.createElement('li');
+                li.textContent = file.name;
+                li.title = file.name;
+                li.addEventListener('click', () => {
+                    selectedFileName.textContent = file.name;
+                    customDropdown.classList.remove('open');
+                    renderMarkdown(file.path);
+                });
+                fileListElement.appendChild(li);
+            });
+        }
+
+        // 初始化自定义下拉菜单
+        function initSelector() {
+            renderFileList();
+
+            // 点击头部展开/收起
+            dropdownHeader.addEventListener('click', (e) => {
+                e.stopPropagation(); // 阻止冒泡
+                customDropdown.classList.toggle('open');
+                if (customDropdown.classList.contains('open')) {
+                    fileSearchInput.focus(); // 展开时自动聚焦搜索框
+                    fileSearchInput.value = ''; // 展开时清空搜索词
+                    renderFileList(); // 重新渲染完整列表
+                }
+            });
+
+            // 点击外部关闭下拉框
+            document.addEventListener('click', (e) => {
+                if (!customDropdown.contains(e.target)) {
+                    customDropdown.classList.remove('open');
+                }
+            });
+
+            // 搜索框输入事件
+            fileSearchInput.addEventListener('input', (e) => {
+                renderFileList(e.target.value);
+            });
+            
+            // 阻止搜索框点击事件冒泡导致下拉框关闭
+            fileSearchInput.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+        }
+
+        // 获取并渲染 Markdown
+        async function renderMarkdown(filePath) {
+            contentDiv.innerHTML = '<div class="status-message">正在加载文档内容...</div>';
+            
+            try {
+                const response = await fetch(filePath);
+                if (!response.ok) {
+                    throw new Error(`无法访问文件：${filePath} (HTTP 状态码: ${response.status})`);
+                }
+                const markdownText = await response.text();
+                const htmlContent = marked.parse(markdownText);
+                contentDiv.innerHTML = htmlContent;
+            } catch (error) {
+                console.error('加载失败:', error);
+                contentDiv.innerHTML = `
+                    <div class="error-message">
+                        <h2>⚠️ 无法加载文档</h2>
+                        <p><strong>错误信息:</strong> ${error.message}</p>
+                        <p>请检查该文件是否存在，并且确保你已经通过本地服务器 (如 Live Server, python -m http.server) 访问该页面。</p>
+                    </div>
+                `;
+            }
+        }
+
+        /* =========================================
+           5. 页面加载完毕执行初始化
+           ========================================= */
+        window.onload = () => {
+            initSelector();
+            // 默认加载列表中的第一个文件
+            if (fileConfig.length > 0) {
+                selectedFileName.textContent = fileConfig[0].name;
+                renderMarkdown(fileConfig[0].path);
+            }
+        };
+    </script>
+</body>
+</html>
