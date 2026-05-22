@@ -1,0 +1,1839 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>taken. — Since You Arrived Vol. IV 中文版</title>
+<meta name="description" content="当你阅读时，这个页面会把它早已知道的关于你的信息一一揭开。无须输入。无须授权。没有例外。">
+<meta name="author" content="Matt">
+
+<link rel="canonical" href="https://sinceyouarrived.world/taken">
+<meta name="robots" content="noindex, nofollow">
+
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Since You Arrived">
+<meta property="og:url" content="https://sinceyouarrived.world/taken">
+<meta property="og:title" content="taken.">
+<meta property="og:description" content="一个网页，告诉你你的浏览器在你打开它的那一刻泄露了什么。没有登录，没有表单，没有授权。大多数网页都会这样做，只是没有一个会告诉你。">
+<meta property="article:author" content="Matt">
+<meta property="og:image" content="https://sinceyouarrived.world/api/og-taken">
+<meta property="og:image:secure_url" content="https://sinceyouarrived.world/api/og-taken">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="近黑背景上的衬线字样 &quot;taken.&quot;，下方是一行等宽小字。Since You Arrived · Vol. IV。">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="taken.">
+<meta name="twitter:description" content="一个网页，告诉你你的浏览器在你打开它的那一刻泄露了什么。没有登录，没有表单，没有授权。大多数网页都会这样做，只是没有一个会告诉你。">
+<meta name="twitter:image" content="https://sinceyouarrived.world/api/og-taken">
+<meta name="twitter:image:alt" content="近黑背景上的衬线字样 &quot;taken.&quot;，下方是一行等宽小字。Since You Arrived · Vol. IV。">
+
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%230a0a0a'/><circle cx='16' cy='16' r='3' fill='%23c4a882'/></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' fill='%230a0a0a'/><circle cx='90' cy='90' r='14' fill='%23c4a882'/></svg>">
+<link rel="manifest" href="/manifest.json">
+<link rel="me" href="https://bsky.app/profile/sinceyouarrived.world">
+<link rel="me" href="https://riseuplabs.app/">
+
+<!-- Vol. IV ships without third-party analytics on purpose. The closing paragraph
+     promises the visitor that nothing on this page sends data to third parties. The
+     promise is the volume. Two anonymous beacons hit our own /api/beacon endpoint —
+     no body retained, no identifier — and that is the entire telemetry surface. -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0a0a0a;
+    --fg:        #e8e4df;
+    /* --dim bumped from #8a857f (5.4:1 — cleared AA body but felt
+       borderline for some readers at max brightness, per Bluesky
+       feedback) to #a09a92 (~7.2:1 — clears AAA body). The dossier
+       voice survives: --dim is still markedly quieter than --fg,
+       just no longer in the "almost unreadable" zone. */
+    --dim:       #a09a92;
+    --accent:    #c4a882;
+    /* --faint promoted to the old --dim (3.4:1 — clears AA large text).
+       Labels stay quieter than prose, prose stays quieter than headings;
+       the relative hierarchy is preserved. */
+    --faint:     #6b6560;
+    --darkest:   #2a2724;
+    --serif:     'EB Garamond', 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', 'STSong', 'SimSun', 'Times New Roman', Georgia, serif;
+    --mono:      'IBM Plex Mono', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Courier New', Courier, monospace;
+  }
+
+  /* Honor the OS-level "Increase Contrast" / "more contrast" setting.
+     Visitors who have asked their operating system for higher contrast
+     (macOS, iOS, Windows, Android, GNOME) get prose at ~--fg level and
+     labels bumped a notch. The dossier hierarchy still reads, but the
+     dim register collapses toward legibility for those who need it. */
+  @media (prefers-contrast: more) {
+    :root {
+      --dim:   #e8e4df;  /* = --fg; eliminate the dim register entirely */
+      --faint: #b8b3ab;  /* old prose register; labels stay distinct */
+    }
+  }
+
+  html {
+    font-size: 18px;
+    background: var(--bg);
+    color: var(--fg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--serif);
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  .page { width: 100%; max-width: 640px; padding: 0 24px; position: relative; z-index: 2; }
+
+  /* ── Dossier rule — left-margin meter that fills as observations land,
+        plus tick marks at each observation's document position. ─── */
+  .dossier-rule {
+    position: fixed;
+    top: 0;
+    left: 14px;
+    width: 1px;
+    height: 0;
+    background: var(--faint);
+    transition: height 1.4s ease;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .dossier-tick {
+    position: absolute;
+    left: 14px;
+    width: 8px;
+    height: 1px;
+    background: var(--faint);
+    opacity: 0;
+    transition: opacity 0.9s ease;
+    z-index: 1;
+    pointer-events: none;
+  }
+  .dossier-tick.visible { opacity: 1; }
+
+  /* ── Intro ──────────────────────────────────── */
+  .intro { text-align: center; padding: 18vh 0 4vh; }
+  .series-label {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--faint);
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: appear 1.5s ease forwards 0.5s;
+  }
+  .title {
+    font-family: var(--serif);
+    font-size: 2.6rem;
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    color: var(--fg);
+    opacity: 0;
+  }
+  .title.flicker { animation: flicker 1.8s ease forwards 1.2s; }
+  .title.no-flicker { animation: appear 1.8s ease forwards 1.2s; }
+  .intro-line {
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--dim);
+    margin-top: 2rem;
+    opacity: 0;
+    animation: appear 1.5s ease forwards 2.8s;
+  }
+
+  /* ── Scanning ───────────────────────────────── */
+  .scanning { text-align: center; padding: 5vh 0 2vh; opacity: 0; animation: appear 0.8s ease forwards 4.2s; }
+  .scanning.done { display: none; }
+  .scanning-text {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--faint);
+  }
+  .scanning-fp {
+    width: 64px;
+    height: 64px;
+    margin: 1rem auto 0;
+    color: var(--faint);
+    display: block;
+  }
+  .scanning-fp svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .fp-scan {
+    stroke: var(--dim);
+    animation: fpScan 2.4s ease-in-out infinite;
+    transform-origin: center;
+  }
+  @keyframes fpScan {
+    0%, 100% { transform: translateY(2px); opacity: 0.55; }
+    50%      { transform: translateY(58px); opacity: 1; }
+  }
+
+  /* ── Observations ───────────────────────────── */
+  .observations { padding: 2vh 0 4vh; }
+  .obs { margin-bottom: 3rem; opacity: 0; transform: translateY(14px); }
+  .obs.visible { animation: fadeUp 1s ease forwards; }
+  .obs-label {
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 0.55rem;
+  }
+  .obs-datum {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+    margin-bottom: 0.7rem;
+    word-break: break-word;
+    line-height: 1.5;
+    font-weight: 400;
+  }
+  .obs-prose {
+    font-family: var(--serif);
+    font-size: 0.98rem;
+    line-height: 1.82;
+    color: var(--dim);
+  }
+  .divider {
+    width: 30px;
+    height: 1px;
+    background: var(--faint);
+    margin: 3rem 0;
+    opacity: 0;
+  }
+  .divider.visible { animation: fadeUp 0.5s ease forwards; }
+
+  /* ── Live counter ───────────────────────────── */
+  .live-counter {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.06em;
+    color: var(--faint);
+    text-align: center;
+    padding: 1rem 1.5rem;
+    background: linear-gradient(transparent, var(--bg) 40%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    z-index: 10;
+  }
+  .live-counter.visible { opacity: 1; }
+  .live-counter span { color: var(--dim); }
+
+  /* ── Closing — iconic tally → thesis → behavioral → final → view source ── */
+  .closing { padding: 4vh 0 3vh; }
+
+  .closing-tally {
+    text-align: center;
+    padding: 6vh 0 5vh;
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  .closing-tally.visible { animation: fadeUp 1.6s ease forwards; }
+  .closing-tally-number {
+    font-family: var(--serif);
+    font-size: 5.6rem;
+    font-weight: 400;
+    line-height: 1;
+    color: var(--fg);
+    letter-spacing: -0.02em;
+  }
+  .closing-tally-barcode {
+    margin: 1.6rem auto 1.4rem;
+    width: 156px;
+    height: 32px;
+    color: var(--faint);
+    display: block;
+  }
+  .closing-tally-barcode svg { display: block; width: 100%; height: 100%; }
+  @media (max-width: 480px) {
+    .closing-tally-barcode { width: 132px; height: 28px; }
+  }
+  .closing-tally-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 1.4rem;
+  }
+  .closing-tally-line {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    color: var(--faint);
+  }
+
+  .closing-thesis,
+  .closing-behavioral,
+  .closing-final,
+  .closing-source-line {
+    text-align: center;
+    max-width: 460px;
+    margin: 0 auto;
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  .closing-thesis.visible,
+  .closing-behavioral.visible,
+  .closing-final.visible,
+  .closing-source-line.visible {
+    animation: fadeUp 1.4s ease forwards;
+  }
+  .closing-thesis {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: var(--fg);
+    font-style: italic;
+    padding: 0 0 4vh;
+  }
+  .closing-behavioral {
+    font-family: var(--serif);
+    font-size: 0.98rem;
+    line-height: 1.85;
+    color: var(--dim);
+    padding: 4vh 0;
+  }
+  .closing-behavioral .obs-label { display: block; margin-bottom: 0.55rem; }
+  .closing-behavioral .obs-datum { display: block; margin-bottom: 0.7rem; }
+  .closing-final {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: var(--fg);
+    font-style: italic;
+    padding: 4vh 0 3vh;
+  }
+  .closing-final-tag {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-top: 1.4rem;
+    font-style: normal;
+    display: block;
+  }
+  .closing-source-line {
+    font-family: var(--serif);
+    font-size: 0.96rem;
+    line-height: 1.85;
+    color: var(--dim);
+    padding: 3vh 0 5vh;
+  }
+
+  .sources-trigger {
+    background: none;
+    border: none;
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--dim);
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    margin: 1.2rem auto 0;
+    display: block;
+    border-bottom: 1px solid var(--faint);
+    transition: color 0.3s ease, border-color 0.3s ease;
+  }
+  .sources-trigger:hover,
+  .sources-trigger:focus {
+    color: var(--accent);
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  .share-trigger {
+    background: none;
+    border: 1px solid var(--faint);
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--dim);
+    cursor: pointer;
+    padding: 0.85rem 1.4rem;
+    margin: 2rem auto 0;
+    display: block;
+    transition: color 0.3s ease, border-color 0.3s ease;
+  }
+  .share-trigger:hover,
+  .share-trigger:focus {
+    color: var(--fg);
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  /* ── Footer ─────────────────────────────────── */
+  .footer {
+    font-family: var(--serif);
+    font-size: 0.92rem;
+    line-height: 1.85;
+    color: var(--faint);
+    text-align: center;
+    padding: 6vh 24px 5vh;
+    opacity: 0;
+    max-width: 560px;
+    margin: 0 auto;
+    font-style: italic;
+  }
+  .footer.visible { animation: fadeUp 0.9s ease forwards; }
+  .footer a { color: var(--dim); text-decoration: none; border-bottom: 1px solid var(--darkest); transition: color 0.3s ease, border-color 0.3s ease; }
+  .footer a:hover { color: var(--accent); border-color: var(--accent); }
+  .footer-meta {
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--darkest);
+    margin-top: 2.5rem;
+    font-style: normal;
+  }
+  .colophon-made {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 0.78rem;
+    color: var(--darkest);
+    margin-top: 1.4rem;
+    letter-spacing: 0.01em;
+  }
+  .colophon-made a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(232,228,223,0.10);
+    transition: border-color 0.25s ease, color 0.25s ease;
+  }
+  .colophon-made a:hover {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* ── Tab notice ─────────────────────────────── */
+  .tab-notice {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    font-family: var(--mono);
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    text-align: center;
+    padding: 0.85rem 1rem;
+    background: var(--bg);
+    border-bottom: 1px solid var(--faint);
+    opacity: 0;
+    transform: translateY(-100%);
+    transition: all 0.5s ease;
+    z-index: 20;
+    pointer-events: none;
+  }
+  .tab-notice.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── Modals ─────────────────────────────────── */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 10, 0.92);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+    z-index: 100;
+    padding: 4vh 1rem;
+  }
+  .modal.show { display: flex; animation: modalIn 300ms ease; }
+
+  /* Share */
+  .share-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 10, 0.92);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 110;
+    padding: 4vh 1rem;
+  }
+  .share-modal.show { display: flex; animation: modalIn 300ms ease; }
+  .share-card-wrap {
+    background: #15120e;
+    border: 1px solid var(--faint);
+    max-width: 460px;
+    width: 100%;
+    padding: 2.4rem 1.8rem 1.6rem;
+    color: var(--fg);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  }
+  .share-kicker {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-align: center;
+    margin-bottom: 1.4rem;
+  }
+  .share-preview {
+    border-top: 1px solid var(--faint);
+    border-bottom: 1px solid var(--faint);
+    padding: 1.4rem 0;
+    margin-bottom: 1.6rem;
+    text-align: center;
+  }
+  .share-preview-label {
+    font-family: var(--mono);
+    font-size: 0.55rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--dim);
+    margin-bottom: 0.8rem;
+  }
+  .share-preview-headline {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--fg);
+    line-height: 1.6;
+    margin-bottom: 0.8rem;
+  }
+  .share-preview-tally {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+  }
+  .share-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem;
+    margin-bottom: 0.8rem;
+  }
+  .seal-btn {
+    background: transparent;
+    border: 1px solid var(--faint);
+    color: var(--fg);
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    padding: 0.85rem 0.5rem;
+    cursor: pointer;
+    transition: border-color 0.25s ease, color 0.25s ease, background 0.25s ease;
+  }
+  .seal-btn:hover, .seal-btn:focus {
+    border-color: var(--accent);
+    color: var(--accent);
+    outline: none;
+  }
+  .seal-btn.full-row { grid-column: 1 / -1; }
+  .share-close-row { text-align: center; margin-top: 0.8rem; }
+  .share-close {
+    background: none;
+    border: none;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--dim);
+    cursor: pointer;
+    padding: 0.6rem 1rem;
+  }
+  .share-close:hover, .share-close:focus { color: var(--fg); outline: none; }
+
+  /* Sources */
+  .sources-card {
+    background: #15120e;
+    border: 1px solid var(--faint);
+    max-width: 640px;
+    width: 100%;
+    padding: 2.6rem 1.8rem 2rem;
+    color: var(--fg);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+  }
+  .sources-kicker {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  .sources-title {
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-weight: 400;
+    text-align: center;
+    margin-bottom: 0.8rem;
+    color: var(--fg);
+    letter-spacing: -0.01em;
+  }
+  .sources-sub {
+    font-family: var(--serif);
+    font-size: 0.96rem;
+    line-height: 1.75;
+    color: var(--dim);
+    text-align: center;
+    margin-bottom: 1.6rem;
+    font-style: italic;
+  }
+  .source-list { list-style: none; padding: 0; }
+  .source-item { padding: 1.2rem 0; border-top: 1px solid var(--faint); }
+  .source-item:first-child { border-top: 1px solid var(--faint); }
+  .source-label {
+    font-family: var(--mono);
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.45rem;
+  }
+  .source-cite {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--dim);
+    margin-bottom: 0.6rem;
+    word-break: break-word;
+  }
+  .source-cite a { color: var(--dim); border-bottom: 1px dotted var(--faint); text-decoration: none; }
+  .source-cite a:hover { color: var(--accent); border-color: var(--accent); }
+  .source-note {
+    font-family: var(--serif);
+    font-size: 0.92rem;
+    line-height: 1.7;
+    color: var(--dim);
+  }
+  .sources-foot {
+    margin-top: 1.6rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--faint);
+    font-family: var(--serif);
+    font-size: 0.92rem;
+    line-height: 1.75;
+    color: var(--dim);
+    text-align: center;
+    font-style: italic;
+  }
+  .sources-foot a { color: var(--dim); border-bottom: 1px dotted var(--faint); text-decoration: none; }
+  .sources-foot a:hover { color: var(--accent); border-color: var(--accent); }
+  .sources-close {
+    display: block;
+    margin: 1.6rem auto 0;
+    background: none;
+    border: 1px solid var(--faint);
+    color: var(--dim);
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 0.85rem 1.6rem;
+    cursor: pointer;
+    transition: color 0.25s ease, border-color 0.25s ease;
+  }
+  .sources-close:hover, .sources-close:focus {
+    color: var(--accent);
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  /* ── Animations ─────────────────────────────── */
+  @keyframes appear { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes modalIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes flicker {
+    0%   { opacity: 0; transform: translateX(0); filter: blur(0); }
+    8%   { opacity: 0.4; transform: translateX(-2px); filter: blur(1.2px); }
+    14%  { opacity: 0.1; transform: translateX(2px); filter: blur(0.6px); }
+    22%  { opacity: 0.9; transform: translateX(-1px); filter: blur(0); }
+    30%  { opacity: 0.5; transform: translateX(1px); filter: blur(0.4px); }
+    42%  { opacity: 1; transform: translateX(0); filter: blur(0); }
+    100% { opacity: 1; transform: translateX(0); filter: blur(0); }
+  }
+
+  /* Honor reduced motion — the volume reads the visitor's preference; it should also respect it. */
+  @media (prefers-reduced-motion: reduce) {
+    .fp-scan { animation: none; }
+    .title.flicker { animation: appear 0.6s ease forwards 0.5s; }
+    .obs.visible, .divider.visible,
+    .closing-tally.visible, .closing-thesis.visible, .closing-behavioral.visible,
+    .closing-final.visible, .closing-source-line.visible,
+    .footer.visible { animation: appear 0.6s ease forwards; transform: none; }
+  }
+
+  @media (max-width: 480px) {
+    html { font-size: 16px; }
+    .title { font-size: 2.1rem; }
+    .intro { padding: 12vh 0 3vh; }
+    .page { padding: 0 20px; }
+    .closing-tally-number { font-size: 4.4rem; }
+    .dossier-rule, .dossier-tick { left: 8px; }
+    .share-btns { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<noscript>
+  <div style="max-width:640px;margin:6rem auto;padding:0 1.5rem;font-family:'EB Garamond',Georgia,serif;color:#e8e4df;">
+    <div style="font-family:'IBM Plex Mono','Courier New',monospace;font-size:13px;letter-spacing:0.22em;text-transform:uppercase;color:#6b6560;margin-bottom:2.5rem;">Since You Arrived &middot; 第 IV 卷</div>
+    <h1 style="font-size:4rem;font-weight:400;letter-spacing:-0.02em;color:#e8e4df;margin:0 0 2rem;">taken.</h1>
+    <p style="font-size:1.125rem;line-height:1.7;font-style:italic;color:#a09a92;margin-bottom:1.25rem;">这一卷需要 JavaScript。这本来就是题目的一部分。被读取的是你的浏览器。</p>
+    <p style="font-size:1rem;line-height:1.7;color:#a09a92;">关闭 JavaScript 后，这个页面就无法告诉你浏览器泄露了什么。但数据仍然在那里，泄露也已经发生。停下来的，只有“告诉你”这件事。</p>
+  </div>
+</noscript>
+
+<div class="dossier-rule" id="dossierRule"></div>
+
+<div class="page">
+  <div class="intro">
+    <div class="series-label">Since You Arrived · 第 IV 卷</div>
+    <h1 class="title" id="title">taken.</h1>
+    <p class="intro-line">你打开了这个页面。它已经知道下面这些事。</p>
+  </div>
+
+  <div class="scanning" id="scanning">
+    <div class="scanning-text">读取中</div>
+    <div class="scanning-fp">
+      <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <g stroke="currentColor" stroke-width="1" fill="none" stroke-linecap="round">
+          <path d="M 8,42 C 10,22 54,22 56,42"/>
+          <path d="M 12,46 C 14,28 50,28 52,46"/>
+          <path d="M 16,50 C 18,34 46,34 48,50"/>
+          <path d="M 20,54 C 22,40 42,40 44,54"/>
+          <path d="M 26,58 C 27,46 37,46 38,58"/>
+          <path d="M 32,42 L 32,58"/>
+          <path d="M 28,46 L 28,58"/>
+          <path d="M 36,46 L 36,58"/>
+        </g>
+        <line class="fp-scan" x1="6" y1="0" x2="58" y2="0" stroke-width="1"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="observations" id="observations"></div>
+
+  <div class="closing" id="closing"></div>
+
+  <div class="footer" id="footer">
+    <p>
+      <a href="https://sinceyouarrived.world/">第一卷</a>写的是你停留在这里时，世界做了什么。
+      <a href="https://sinceyouarrived.world/sky">第二卷</a>写的是你错过的天空。
+      <a href="https://sinceyouarrived.world/discovered">第三卷</a>写的是原本就躺在你脚边的东西。
+      这是第四卷。我们觉得你应该知道。
+    </p>
+    <p>
+      <a href="https://sinceyouarrived.world/distance">第五卷</a>写的是那个无人阅读的地方。
+    </p>
+    <button class="sources-trigger" id="sourcesBtn2" type="button">来源与坦白</button>
+    <div class="footer-meta" id="footer-edition">第 IV 卷 · 2026年4月</div>
+    <div class="colophon-made">由 <a href="https://bsky.app/profile/sinceyouarrived.world" target="_blank" rel="noopener noreferrer">Matt</a> 在 <a href="https://riseuplabs.app/" target="_blank" rel="noopener noreferrer">Rise Up Labs</a> 制作。<br>Bluesky：<a href="https://bsky.app/profile/sinceyouarrived.world" target="_blank" rel="noopener noreferrer">@sinceyouarrived.world</a>。</div>
+  </div>
+</div>
+
+<div class="live-counter" id="liveCounter"></div>
+<div class="tab-notice" id="tabNotice"></div>
+
+<!-- ─────────────── Share Modal ─────────────── -->
+<div class="share-modal" id="shareModal" role="dialog" aria-modal="true" aria-labelledby="shareHeading">
+  <div class="share-card-wrap">
+    <div class="share-kicker" id="shareHeading">— 告诉别人 —</div>
+    <div class="share-preview">
+      <div class="share-preview-label">这个页面知道的事</div>
+      <p class="share-preview-headline" id="share-preview-headline">一个网页刚刚在没有征求我同意的情况下，把它从我身上知道的一切都告诉了我。</p>
+      <div class="share-preview-tally" id="share-preview-tally"></div>
+    </div>
+    <div class="share-btns">
+      <button class="seal-btn" onclick="doShare('x')">𝕏 (Twitter)</button>
+      <button class="seal-btn" onclick="doShare('bluesky')">Bluesky</button>
+      <button class="seal-btn" onclick="doShare('linkedin')">LinkedIn</button>
+      <button class="seal-btn" onclick="doShare('facebook')">Facebook</button>
+      <button class="seal-btn" onclick="doShare('reddit')">Reddit</button>
+      <button class="seal-btn" onclick="doShare('whatsapp')">WhatsApp</button>
+      <button class="seal-btn full-row" id="copy-link-btn" onclick="doShare('copy')">复制链接</button>
+    </div>
+    <div class="share-close-row">
+      <button class="share-close" id="shareCloseBtn" type="button">关闭</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────── Sources & Confessions Modal ─────────────── -->
+<div class="modal" id="sourcesModal" role="dialog" aria-modal="true" aria-labelledby="sourcesHeading">
+  <div class="sources-card">
+    <div class="sources-kicker">— 关于你交出的信息 —</div>
+    <h2 class="sources-title" id="sourcesHeading">来源与坦白</h2>
+    <div class="sources-sub">这个页面上的每一条观察，都来自你刚刚打开它那几毫秒内，你自己的浏览器。文字由人写成。下面是几条诚实的注脚。</div>
+
+    <ul class="source-list">
+      <li class="source-item">
+        <div class="source-label">你的位置</div>
+        <div class="source-cite"><a href="https://ip-api.com" target="_blank" rel="noopener noreferrer">ip-api.com · 免费层级 · CC-BY-SA</a></div>
+        <div class="source-note">你的 IP 地址会出现在设备发出的每一个请求头里。我们把它交给 ip-api.com，把它换成城市和网络服务商名称。查询是瞬时的，双方都不保存。在 GDPR 下，若用于跟踪，IP 地址可被视为个人数据。我们不跟踪，不保留，不记日志。屏幕上只显示第一段和最后一段。其余部分我们知道，只是选择不显示。</div>
+      </li>
+      <li class="source-item">
+        <div class="source-label">浏览器 API</div>
+        <div class="source-cite"><a href="https://developer.mozilla.org/en-US/docs/Web/API" target="_blank" rel="noopener noreferrer">MDN Web Docs · Mozilla · CC-BY-SA 2.5</a></div>
+        <div class="source-note">关于你的设备的一切观察（屏幕、浏览器、语言、GPU、核心数、电池、字体、偏好设置）都来自 Mozilla 公开文档里定义的标准 JavaScript API。没有利用，没有漏洞，没有黑客技巧。这个页面上的一切，都是设计使然。问题就在设计本身。</div>
+      </li>
+      <li class="source-item">
+        <div class="source-label">字体指纹</div>
+        <div class="source-cite"><a href="https://coveryourtracks.eff.org/" target="_blank" rel="noopener noreferrer">Electronic Frontier Foundation · Cover Your Tracks (formerly Panopticlick)</a></div>
+        <div class="source-note">通过测量文本渲染宽度来检测已安装字体的技术，自 2010 年起就有文献记录。EFF 维护着一个工具，让你看到自己的浏览器有多独特。大多数浏览器即使完全不依赖 Cookie，也已经足够独特，能够在开放网络中被持续跟踪。字体组合是其中最强的信号之一。</div>
+      </li>
+      <li class="source-item">
+        <div class="source-label">Canvas 指纹</div>
+        <div class="source-cite"><a href="https://webtransparency.cs.princeton.edu/" target="_blank" rel="noopener noreferrer">Princeton University · Web Transparency &amp; Accountability Project</a></div>
+        <div class="source-note">普林斯顿大学在 2014 年发表的研究，首次记录了真实世界中的 Canvas 指纹。研究者在排名前 10 万的网站里发现，5% 会偷偷让访问者的浏览器绘制一张隐藏图片，再把渲染出来的像素读回去，当成标识符。你的浏览器支持这种技术。我们没有画。你接下来打开的页面，也许会。</div>
+      </li>
+      <li class="source-item">
+        <div class="source-label">剪贴板 API</div>
+        <div class="source-cite"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Clipboard_API" target="_blank" rel="noopener noreferrer">MDN · Clipboard API 规范</a></div>
+        <div class="source-note">只要有一个用户手势（一次点击、一次点按），页面就可以请求读取你最近复制过的内容。可能是密码，可能是地址，可能是一条还没发出的消息。每一个现代浏览器都会宣告自己具备这项能力。我们没有请求。能力就在那里，任何在合适时机发问的页面都能用。</div>
+      </li>
+      <li class="source-item">
+        <div class="source-label">电池研究</div>
+        <div class="source-cite">Olejnik, Englehardt, Narayanan · 2015 · "The Leaking Battery"</div>
+        <div class="source-note">发表于 Workshop on Data Privacy Management 论文集。论文证明，电量百分比和放电时间的组合已经足够独特，能够在多个网站之间追踪同一个访客，最长可达三十分钟。没有 Cookie，没有账号。Firefox 在 2016 年移除了这个 API。Chrome 和 Edge 仍然暴露它。</div>
+      </li>
+      <li class="source-item">
+        <div class="source-label">我们没有运行的技术</div>
+        <div class="source-cite">有文档记录 · 合法 · 广泛部署</div>
+        <div class="source-note">页面可以通过让你的浏览器加载其他站点的 favicon 地址，并观察哪些成功、哪些失败，来判断你登录了哪些网站。登录态和未登录态返回的图片并不一样。这个技术不需要任何权限。靠它，一个页面无需征求同意，就能知道你是否登录着 Facebook、Google、X、GitHub、Reddit、LinkedIn 以及更多服务。我们没有运行它。它有公开文档，也合法。你今天访问过的某些页面运行了。</div>
+      </li>
+      <li class="source-item">
+        <div class="source-label">条形码</div>
+        <div class="source-cite">在你的浏览器里计算 · 16 条细线 · 只属于你</div>
+        <div class="source-note">数字下方的十六根细线，高度来自你的设备交出来的数据：GPU、字体、屏幕尺寸、语言、时区、操作系统、浏览器、色深。相同数据，相同条码。不同访客，不同条码。计算发生在你的浏览器里，什么都不会被发送出去。只有拥有和你完全一样指纹的人，才会看到相同的线。这个概率很小。</div>
+      </li>
+      <li class="source-item">
+        <div class="source-label">文字</div>
+        <div class="source-cite">手写 · 基于模板，不是生成式</div>
+        <div class="source-note">这个页面上的每一句话都由 Matt 写成。代码会根据浏览器返回的数据，从现成的文字模板中挑选。运行时没有任何语言模型负责写作或改写。如果某种情况没有被手写文案覆盖，页面就对它保持沉默。我们宁可少说，也不愿说错。</div>
+      </li>
+      <li class="source-item">
+        <div class="source-label">这个页面发送了什么</div>
+        <div class="source-cite">两个匿名事件到我们的服务器</div>
+        <div class="source-note">两个事件：你来了，你读完了。没有 Cookie，没有标识符，不保留 IP。我们的服务器会丢弃每次请求的 body，也不返回任何东西。请求发生过这件事，仍会作为传输层记录存在于托管商日志里，直到他们的默认保留期结束，通常是几天。不是我们配置的。你访问的每个网站都会有同样的记录。区别在于，大多数网站还会额外向广告商、指纹采集方、会话回放工具和标签管理器发送数百个信标。我们只发两个，发给自己，并且告诉你。</div>
+      </li>
+      <li class="source-item">
+        <div class="source-label">这个页面在你的设备上存了什么</div>
+        <div class="source-cite">什么都没有</div>
+        <div class="source-note">没有 Cookie。没有 localStorage。没有 sessionStorage。没有 IndexedDB。没有 service worker 缓存。你看到的数据都在你的浏览器里算出，从未离开你的设备，除了 IP 地理位置查询，以及上面那两个匿名事件。你一关闭这个标签页，这个页面就会忘记你存在过。今天你访问的页面里，能诚实说出这句话的，我们大概是唯一一个。</div>
+      </li>
+      <li class="source-item">
+        <div class="source-label">系列其他卷</div>
+        <div class="source-cite"><a href="/" rel="noopener">sinceyouarrived.world</a> · <a href="/sky" rel="noopener">/sky</a> · <a href="/discovered" rel="noopener">/discovered</a> · <a href="/distance" rel="noopener">/distance</a></div>
+        <div class="source-note">第一卷写的是你停留在这里时世界做了什么。第二卷写的是你错过的天空。第三卷写的是原本就在你脚边的事物。这是第四卷。这个系列每一卷都在继续收缩焦距：从全球，到城市，到坐标，再到你。你也许已经察觉它一路走来的方向。</div>
+      </li>
+    </ul>
+
+    <div class="sources-foot">
+      打开源代码，读一遍。Mac 上按 <code>Cmd+U</code>，Windows 或 Linux 上按 <code>Ctrl+U</code>。或者在任意位置右键，选择“查看网页源代码”。上面描述的一切，都写在你正在阅读的这个页面里。我们没什么好藏的。大多数页面说不了这句话。
+      <br><br>
+      <em>未来的版本会发布在 <a href="https://x.com/sinceyouarrived" target="_blank" rel="noopener">X</a> 和 <a href="https://bsky.app/profile/sinceyouarrived.world" target="_blank" rel="noopener">Bluesky</a>。</em>
+    </div>
+
+    <button class="sources-close" id="sourcesCloseBtn" type="button">关闭</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ============================================================
+   STATE
+   ============================================================ */
+
+const T0 = performance.now();
+const ARRIVAL = new Date();
+const SHARE_URL = window.location.href;
+
+let tabSwitches = 0;
+let scrollMax = 0;
+let mouseMovements = 0;
+let clicks = 0;
+let dataPoints = 0;
+let counterVisible = false;
+let tabLeftAt = null;
+let scrollPauses = 0;
+let pauseStart = null;
+let longestPause = 0;
+let totalBehavioralEvents = 0;
+let prefersReducedMotion = false;
+try { prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+
+/* ============================================================
+   BEACON — two anonymous pings to our own server
+   No cookie, no identifier, no body retained on the server.
+   ============================================================ */
+
+function beacon(name) {
+  try {
+    const body = JSON.stringify({ event: name, ts: Date.now() });
+    if (navigator.sendBeacon) {
+      const blob = new Blob([body], { type: 'application/json' });
+      navigator.sendBeacon('/api/beacon', blob);
+    } else {
+      fetch('/api/beacon', {
+        method: 'POST',
+        body,
+        headers: { 'Content-Type': 'application/json' },
+        keepalive: true
+      }).catch(() => {});
+    }
+  } catch (e) { /* fail silent — the volume should not interrupt itself */ }
+}
+
+beacon('TakenLoaded');
+
+/* ============================================================
+   BEHAVIORAL TRACKING — visible only on screen, never sent
+   ============================================================ */
+
+document.addEventListener('mousemove',  () => { mouseMovements++; totalBehavioralEvents++; }, { passive: true });
+document.addEventListener('touchmove',  () => { mouseMovements++; totalBehavioralEvents++; }, { passive: true });
+document.addEventListener('click',      () => { clicks++; totalBehavioralEvents++; });
+document.addEventListener('touchstart', () => { clicks++; totalBehavioralEvents++; }, { passive: true });
+
+let scrollTimer = null;
+window.addEventListener('scroll', () => {
+  totalBehavioralEvents++;
+  /* The behavioral-reveal section gets injected into the DOM after the
+     visitor finishes reading, which can make scrollHeight a moving target
+     and let scrollY momentarily exceed denom. Clamp to [0, 100] so we
+     never tell a visitor they "scrolled 103% of the way down." */
+  const denom = Math.max(1, document.body.scrollHeight - window.innerHeight);
+  const pct = Math.min(100, Math.max(0, Math.round((window.scrollY / denom) * 100)));
+  if (pct > scrollMax) scrollMax = pct;
+  if (pauseStart) {
+    const dur = (performance.now() - pauseStart) / 1000;
+    if (dur > longestPause) longestPause = dur;
+    pauseStart = null;
+  }
+  clearTimeout(scrollTimer);
+  scrollTimer = setTimeout(() => { pauseStart = performance.now(); scrollPauses++; }, 1500);
+}, { passive: true });
+
+/* Tab visibility — fires the "you left" tab notice + dynamic observation */
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) {
+    tabSwitches++;
+    tabLeftAt = performance.now();
+  } else if (tabLeftAt) {
+    const gone = ((performance.now() - tabLeftAt) / 1000).toFixed(1);
+    const notice = document.getElementById('tabNotice');
+    notice.textContent = '你离开了 ' + gone + ' 秒。我们注意到了。';
+    notice.classList.add('visible');
+    setTimeout(() => notice.classList.remove('visible'), 4000);
+    tabLeftAt = null;
+
+    const obs = document.getElementById('observations');
+    if (obs.children.length > 0 && !document.getElementById('tab-obs')) {
+      const div = document.createElement('div');
+      div.className = 'obs';
+      div.id = 'tab-obs';
+      div.innerHTML =
+        '<div class="divider visible" style="opacity:1;margin-bottom:3rem"></div>' +
+        '<div class="obs-label">你离开过</div>' +
+        '<div class="obs-datum">' + gone + ' 秒不在</div>' +
+        '<div class="obs-prose">你刚刚切到了另一个标签页，或者另一个应用，并在 ' + gone +
+        ' 秒后回来了。Visibility API 记录了你离开的准确时刻，也记录了你返回的准确时刻。你打开的每一个网站都能读取这个信号。大多数广告平台用它来计算，你是否真的在看它们的广告，还是只是把页面挂在后台。你的注意力是一种商品。我们刚刚看着它走出了房间。</div>';
+      const closingEl = document.getElementById('closing');
+      closingEl.parentNode.insertBefore(div, closingEl);
+      requestAnimationFrame(() => div.classList.add('visible'));
+      dataPoints += 2;
+    }
+  }
+});
+
+/* ============================================================
+   COLLECT — every observation comes from a standard browser API
+   ============================================================ */
+
+/* ============================================================
+   FINGERPRINT BARCODE — sixteen hairlines, deterministically
+   hashed from stable browser-provided data points. Same visitor,
+   same barcode. Computed in the browser, never sent.
+   ============================================================ */
+
+function deterministicBars(d) {
+  const parts = [
+    (d.geo && d.geo.city) || '',
+    (d.geo && d.geo.country) || '',
+    d.tz || '',
+    d.browser || '', d.os || '',
+    d.screenW + 'x' + d.screenH,
+    String(d.pixelRatio), String(d.colorDepth),
+    d.lang || '',
+    d.gpu || '',
+    (d.installed || []).slice().sort().join(','),
+    d.cookiesEnabled ? '1' : '0',
+    d.darkMode ? '1' : '0',
+    d.doNotTrack ? '1' : '0'
+  ].join('|');
+
+  const N = 16;
+  const bars = [];
+  for (let i = 0; i < N; i++) {
+    /* Sixteen independent FNV-1a-style hashes seeded by index.
+       Each visitor's data produces sixteen stable [0,1] heights. */
+    let h = 2166136261 ^ Math.imul(i + 1, 2654435761);
+    for (let j = 0; j < parts.length; j++) {
+      h ^= parts.charCodeAt(j);
+      h = Math.imul(h, 16777619);
+    }
+    h = (h ^ (h >>> 13)) >>> 0;
+    h = (Math.imul(h, 1274126177) ^ (h >>> 16)) >>> 0;
+    bars.push((h % 1000) / 999);
+  }
+  return bars;
+}
+
+function renderBarcodeSvg(bars) {
+  const W = 156, H = 32, barW = 2;
+  const N = bars.length;
+  const gapW = (W - N * barW) / (N - 1);
+
+  let rects = '';
+  for (let i = 0; i < N; i++) {
+    const minH = 6, maxH = H;
+    const h = minH + bars[i] * (maxH - minH);
+    const y = (H - h) / 2;
+    const x = i * (barW + gapW);
+    rects += '<rect x="' + x.toFixed(2) + '" y="' + y.toFixed(2) +
+             '" width="' + barW + '" height="' + h.toFixed(2) +
+             '" fill="currentColor"/>';
+  }
+  return '<svg viewBox="0 0 ' + W + ' ' + H + '" width="' + W + '" height="' + H +
+         '" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">' +
+         rects + '</svg>';
+}
+
+/* ============================================================
+   COUNT-UP — the iconic "29" ticks from 0 with ease-out cubic.
+   Honors prefers-reduced-motion.
+   ============================================================ */
+
+/* ============================================================
+   CAPTURE-ON-SIGHT — for the behavioral and final blocks. The
+   blocks fade in on a timer (climax choreography), but the
+   metrics they report are captured the moment the visitor
+   actually reaches them in the viewport. Frozen on first sight.
+   Falls back to a generous timeout if IntersectionObserver is
+   unavailable or if the visitor never scrolls to the block.
+   ============================================================ */
+
+function captureWhenSeen(el, populator, fallbackMs) {
+  let captured = false;
+  const trigger = () => {
+    if (captured) return;
+    captured = true;
+    try { populator(); } catch (e) {}
+  };
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          trigger();
+          observer.disconnect();
+        }
+      });
+    }, { threshold: 0.4 });
+    observer.observe(el);
+  }
+  setTimeout(trigger, fallbackMs || 60000);
+}
+
+function animateCountUp(el, target, duration) {
+  if (prefersReducedMotion || target <= 0) {
+    el.textContent = String(target);
+    return;
+  }
+  const start = performance.now();
+  function frame(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - t, 3);
+    el.textContent = String(Math.round(target * eased));
+    if (t < 1) requestAnimationFrame(frame);
+    else el.textContent = String(target);
+  }
+  requestAnimationFrame(frame);
+}
+
+function maskIp(ip) {
+  if (!ip) return ip;
+  const v4 = String(ip).match(/^(\d+)\.\d+\.\d+\.(\d+)$/);
+  if (v4) return v4[1] + '.xxx.xxx.' + v4[2];
+  if (String(ip).indexOf(':') !== -1) {
+    const hex = String(ip).split(':')[0];
+    return hex + ':xxxx:xxxx:xxxx::xxxx';
+  }
+  return ip;
+}
+
+async function collect() {
+  const nav = navigator;
+  const scr = screen;
+  const w = window;
+
+  const hour = ARRIVAL.getHours();
+  const minute = ARRIVAL.getMinutes();
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '未命名的时区';
+  const tzPretty = tz.replace(/_/g, ' ').replace(/\//g, ' / ');
+
+  let timeOfDay = '凌晨';
+  if      (hour >= 5  && hour < 8)  timeOfDay = '清晨';
+  else if (hour >= 8  && hour < 12) timeOfDay = '上午';
+  else if (hour >= 12 && hour < 14) timeOfDay = '中午前后';
+  else if (hour >= 14 && hour < 17) timeOfDay = '下午';
+  else if (hour >= 17 && hour < 20) timeOfDay = '傍晚';
+  else if (hour >= 20 && hour < 23) timeOfDay = '深夜';
+  else if (hour >= 23 || hour < 2)  timeOfDay = '接近午夜';
+
+  const ua = nav.userAgent.toLowerCase();
+
+  /* iOS detection comes first — iPhone/iPod/iPad UAs include "Mac OS X" as a
+     substring, and modern iPads in desktop-mode masquerade as Macintosh
+     entirely (Apple changed this in iPadOS 13). The reliable signal is
+     either an iOS-family token in the UA, or a Macintosh UA paired with
+     more than one touch point — which only iPads produce. */
+  const isIOSDevice  = ua.includes('iphone') || ua.includes('ipad') || ua.includes('ipod');
+  const isIPadOnMac  = ua.includes('macintosh') && (nav.maxTouchPoints || 0) > 1;
+  const isIOS        = isIOSDevice || isIPadOnMac;
+
+  let os = '某个操作系统';
+  if      (isIOS)                                             os = 'iOS';
+  else if (ua.includes('android'))                            os = 'Android';
+  else if (ua.includes('mac os') || ua.includes('macintosh')) os = 'macOS';
+  else if (ua.includes('windows'))                            os = 'Windows';
+  else if (ua.includes('cros'))                               os = 'ChromeOS';
+  else if (ua.includes('linux'))                              os = 'Linux';
+
+  /* Browser detection — iOS browsers are wrappers around WebKit, and they
+     carry distinctive tokens (CriOS, FxiOS, EdgiOS, OPiOS, DuckDuckGo). On
+     iOS, the actual rendering engine is always Safari/WebKit — but the
+     visitor experiences the wrapper, so we name the wrapper. */
+  let browser = '某个浏览器';
+  if      (ua.includes('fxios')     || ua.includes('firefox'))   browser = 'Firefox';
+  else if (ua.includes('edgios')    || ua.includes('edg/'))      browser = 'Edge';
+  else if (ua.includes('crios'))                                 browser = 'Chrome';
+  else if (ua.includes('opios')     || ua.includes('opera') || ua.includes('opr')) browser = 'Opera';
+  else if (ua.includes('duckduckgo'))                            browser = 'DuckDuckGo';
+  else if (ua.includes('brave'))                                 browser = 'Brave';
+  else if (ua.includes('chrome')    && !ua.includes('edg'))      browser = 'Chrome';
+  else if (ua.includes('safari')    && !ua.includes('chrome'))   browser = 'Safari';
+  const touch = nav.maxTouchPoints || 0;
+  const isMobile = touch > 0 && scr.width < 768;
+  const isTablet = touch > 0 && scr.width >= 768 && scr.width < 1200;
+  let deviceType = '电脑';
+  if (isMobile) deviceType = '手机';
+  else if (isTablet) deviceType = '平板';
+
+  const pixelRatio = w.devicePixelRatio || 1;
+  const colorDepth = scr.colorDepth;
+
+  const lang = nav.language || '未知';
+  let langPretty = lang;
+  let otherLangs = [];
+  try {
+    const langNames = new Intl.DisplayNames(['zh-Hans'], { type: 'language' });
+    langPretty = langNames.of(lang.split('-')[0]) || lang;
+    const languages = nav.languages ? Array.from(nav.languages) : [lang];
+    otherLangs = languages.slice(1)
+      .map(l => { try { return langNames.of(l.split('-')[0]) || l; } catch (e) { return l; } })
+      .filter((v, i, a) => a.indexOf(v) === i && v !== langPretty);
+  } catch (e) {}
+
+  const doNotTrack    = nav.doNotTrack === '1' || nav.doNotTrack === 'yes';
+  const cookiesEnabled = nav.cookieEnabled;
+  const darkMode      = w.matchMedia('(prefers-color-scheme:dark)').matches;
+  const reducedMotion = w.matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const referrer      = document.referrer || null;
+
+  /* GPU — WebGL renderer string */
+  let gpu = null;
+  try {
+    const c = document.createElement('canvas');
+    const gl = c.getContext('webgl') || c.getContext('experimental-webgl');
+    if (gl) {
+      const dbg = gl.getExtension('WEBGL_debug_renderer_info');
+      if (dbg) gpu = gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL);
+    }
+  } catch (e) {}
+
+  /* Fonts — measured via width comparison; the device names what it carries */
+  const testFonts = ['Helvetica Neue','Georgia','Courier New','Comic Sans MS','Impact','Trebuchet MS','Palatino','Garamond','Futura','Gill Sans','Verdana','Tahoma','Lucida Console','Cambria','Consolas','Menlo','Monaco'];
+  const installed = [];
+  const probe = document.createElement('span');
+  probe.style.cssText = 'position:absolute;left:-9999px;font-size:72px;visibility:hidden';
+  probe.textContent = 'mmmmmmmmlli';
+  document.body.appendChild(probe);
+  probe.style.fontFamily = 'monospace';
+  const baseW = probe.offsetWidth;
+  testFonts.forEach(f => {
+    probe.style.fontFamily = '"' + f + '",monospace';
+    if (probe.offsetWidth !== baseW) installed.push(f);
+  });
+  document.body.removeChild(probe);
+
+  /* Battery — Chrome/Edge expose; Safari/Firefox kept it back.
+     A desktop-with-no-battery and a fully-charged plugged-in laptop
+     resolve to *identical* signatures (charging:true, level:1,
+     chargingTime:0, dischargingTime:Infinity). Rather than reject both
+     and break real laptops, accept the reading and let the prose name
+     the ambiguity. Only reject malformed (NaN level) responses. */
+  let battery = null;
+  try {
+    if ('getBattery' in nav) {
+      const b = await nav.getBattery();
+      const levelOk = Number.isFinite(b.level) && b.level >= 0 && b.level <= 1;
+      if (levelOk) {
+        battery = { level: Math.round(b.level * 100), charging: b.charging };
+        /* Flag the ambiguous case so the prose can name it. */
+        battery.indistinguishable = b.charging === true && b.level === 1;
+      }
+    }
+  } catch (e) {}
+
+  /* Storage — only if the browser exposes it */
+  let storage = null;
+  try {
+    if (nav.storage && nav.storage.estimate) {
+      const s = await nav.storage.estimate();
+      if (s.quota > 0) storage = { used: Math.round(s.usage / 1024 / 1024), quota: Math.round(s.quota / 1024 / 1024) };
+    }
+  } catch (e) {}
+
+  /* IP geolocation — proxied through our /api/geo to keep the visitor over HTTPS
+     and to keep ip-api.com out of the page's CSP. Server retains nothing. */
+  let geo = null;
+  try {
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 3000);
+    const r = await fetch('/api/geo', { signal: ctrl.signal });
+    clearTimeout(timer);
+    if (r.ok) {
+      const j = await r.json();
+      if (j && j.status === 'success') geo = j;
+    }
+  } catch (e) {}
+
+  /* Device orientation — desktop omits; iOS keeps it back; older Android exposes */
+  let orientation = null;
+  let orientationBlocked = false;
+  if (isMobile) {
+    if (typeof DeviceOrientationEvent !== 'undefined' &&
+        typeof DeviceOrientationEvent.requestPermission === 'function') {
+      orientationBlocked = true;
+    } else if ('DeviceOrientationEvent' in w) {
+      orientation = await new Promise(res => {
+        const handler = e => {
+          if (e.beta !== null) {
+            w.removeEventListener('deviceorientation', handler);
+            res({ beta: Math.round(e.beta), gamma: Math.round(e.gamma) });
+          }
+        };
+        w.addEventListener('deviceorientation', handler);
+        setTimeout(() => { w.removeEventListener('deviceorientation', handler); res(null); }, 2000);
+      });
+    }
+  }
+
+  /* Coarse screen orientation — works without permission, reported regardless */
+  let coarseOrientation = null;
+  try {
+    if (screen.orientation && screen.orientation.type) {
+      coarseOrientation = screen.orientation.type;
+    }
+  } catch (e) {}
+
+  return {
+    hour, minute, tz, tzPretty, timeOfDay,
+    browser, os, isIOS, deviceType, isMobile, touch,
+    screenW: scr.width, screenH: scr.height,
+    innerW: w.innerWidth, innerH: w.innerHeight,
+    pixelRatio, colorDepth,
+    lang, langPretty, otherLangs,
+    doNotTrack, cookiesEnabled, darkMode, reducedMotion,
+    referrer, gpu, installed,
+    battery, storage, geo,
+    orientation, orientationBlocked, coarseOrientation
+  };
+}
+
+/* ============================================================
+   BUILD — voice: data was given freely, never requested
+   ============================================================ */
+
+function build(d) {
+  const obs = [];
+  let dp = 0;
+
+  /* 1 — WHERE YOU ARE */
+  if (d.geo) {
+    const masked = maskIp(d.geo.query);
+    obs.push({
+      label: '你在哪里',
+      datum: d.geo.city + '，' + d.geo.regionName + '，' + d.geo.country,
+      prose: '你看起来位于 ' + d.geo.city + '，' + d.geo.country + '。你的网络服务商是 ' + d.geo.isp + '。我们之所以知道，是因为你的 IP 地址——' + masked + '——是你的设备发给我们的第一样东西。剩下的部分我们也知道，只是选择不展示。大多数页面不会这么选。我们没有请求你的定位。你的地址比你本人先到。'
+    });
+    dp += 5;
+  }
+
+  /* 2 — WHEN YOU ARRIVED */
+  obs.push({
+    label: '你何时到来',
+    datum: String(d.hour).padStart(2, '0') + ':' + String(d.minute).padStart(2, '0') + ' · ' + d.tzPretty,
+    prose: '在你所在的地方，现在是' + d.timeOfDay + '。页面还没加载完，你的设备就已经报上了时区。一个网站只要知道你的本地时间，就能推断你何时睡觉、何时工作，以及何时因为睡不着而浏览网页。这一切都不是请求来的。信息是自己送上门的。'
+  });
+  dp += 2;
+
+  /* 3 — WHAT YOU BROUGHT WITH YOU
+     Some browsers (Firefox with privacy.resistFingerprinting / letterboxing,
+     Brave's farbling) return the window viewport for screen.width — not
+     the real display. When the two are identical the page should name it. */
+  const screenLooksMasked = d.screenW === d.innerW && d.screenH === d.innerH;
+  /* Detect when UA string parsing fell through to defaults. If we couldn't
+     identify either, the prose "Your browser is a browser" reads as a bug
+     rather than the page. Reword the line so the unknown is itself the
+     observation. */
+  const browserKnown = d.browser !== '某个浏览器';
+  const osKnown      = d.os !== '某个操作系统';
+  const devStr = (browserKnown ? d.browser : '？') + ' · ' + (osKnown ? d.os : '？') + ' · ' + d.screenW + '×' + d.screenH + ' @ ' + d.pixelRatio + 'x · ' + d.colorDepth + ' 位色彩';
+  let devP;
+  if (browserKnown && osKnown) {
+    devP = '你正在用运行 ' + d.os + ' 的' + d.deviceType + '阅读这一页。你的浏览器是 ' + d.browser + '。你的屏幕分辨率是 ' + d.screenW + ' × ' + d.screenH + ' 像素';
+  } else if (osKnown) {
+    devP = '你正在用运行 ' + d.os + ' 的' + d.deviceType + '阅读这一页。你的浏览器把自己的身份藏了起来，而这本身就很有辨识度。你的屏幕分辨率是 ' + d.screenW + ' × ' + d.screenH + ' 像素';
+  } else if (browserKnown) {
+    devP = '你正在用 ' + d.browser + ' 阅读这一页。你的操作系统没有报上名字，大多数浏览器都会说，你的没有。你的屏幕分辨率是 ' + d.screenW + ' × ' + d.screenH + ' 像素';
+  } else {
+    devP = '你的设备把自己的身份压低了声音，我们没能叫出你的浏览器或操作系统的名字。这种整齐划一，本身也是一种指纹，只是更柔和。你的屏幕分辨率是 ' + d.screenW + ' × ' + d.screenH + ' 像素';
+  }
+  /* "Recent, high-end" was overclaiming — every retina device since 2010
+     reports pixelRatio >= 2, including the iPhone 5/SE-1 (320×568). Only
+     call it modern when the logical resolution is also large enough. */
+  const looksModern = d.pixelRatio >= 2 && Math.max(d.screenW, d.screenH) >= 390;
+  if      (looksModern)        devP += '，以 ' + d.pixelRatio + 'x 像素密度渲染，这几乎可以确定它是一块较新的高端显示屏。';
+  else if (d.pixelRatio > 1)   devP += '，以 ' + d.pixelRatio + 'x 像素密度渲染。';
+  else                         devP += '. ';
+  if (screenLooksMasked) devP += '更准确地说，那可能只是你的窗口大小。你的浏览器似乎把视口大小拿来顶替真实屏幕尺寸，这是反指纹保护在起作用。而这种替代本身也很特别。';
+  if (d.touch > 0) devP += ' 你的屏幕支持 ' + d.touch + ' 点同时触控。';
+  devP += ' 这些信息，都是你的设备在连接建立后的前几毫秒里主动交出来的。下一页、再下一页，它都会继续这样做。';
+  obs.push({ label: '你带来了什么', datum: devStr, prose: devP });
+  dp += 7;
+
+  /* 4 — WHAT RENDERS YOUR WORLD (GPU)
+     ANGLE format: "ANGLE (vendor, renderer, gl-version)". The renderer is
+     the interesting part — and on Apple it's nested as "ANGLE Metal
+     Renderer: Apple M3". On other vendors the renderer field is the full
+     GPU string. Firefox hardening returns "Mozilla, or similar" or just
+     "Mozilla" as the entire string; treat these as masked. */
+  let gpuShort = null;
+  if (d.gpu) {
+    let raw = String(d.gpu).replace(/^ANGLE \(/, '').replace(/\)$/, '');
+    const parts = raw.split(',');
+    if (parts.length >= 2) {
+      const r = parts[1].match(/Renderer:\s*(.+)/);
+      gpuShort = (r ? r[1] : parts[1]).trim();
+    } else {
+      gpuShort = parts[0].trim();
+    }
+    /* Firefox / privacy-hardened browsers return uninformative strings.
+       Treat any of these as "the browser kept it back." */
+    const lower = gpuShort.toLowerCase();
+    if (!gpuShort ||
+        gpuShort.length < 4 ||
+        lower === 'or similar' ||
+        lower.startsWith('mozilla') ||
+        lower.startsWith('webkit') ||
+        lower === 'apple' ||
+        lower === 'google inc.' ||
+        lower.includes('generic')) {
+      gpuShort = null;
+    }
+  }
+  if (gpuShort) {
+    obs.push({
+      label: '是什么在渲染你的世界',
+      datum: gpuShort,
+      prose: '你的图形处理器报上的名字是 ' + gpuShort + '。这足够让我们知道制造商、代次，以及你这台机器大致的价位。配合屏幕尺寸和字体列表，仅这一串字符就足以把你的设备和互联网上的大多数设备区分开。这个技巧叫 WebGL 指纹。无需权限。'
+    });
+    dp += 1;
+  } else {
+    obs.push({
+      label: '是什么在渲染你的世界',
+      datum: 'GPU：已隐藏',
+      prose: '你的浏览器把图形处理器藏了起来。Firefox 和 Safari 已开始返回 “Mozilla”“Apple”“or similar” 这样的泛化字符串，而不是真实渲染器。你这里也是这样，这一点本身就足以让我们较有把握地推断你用的是什么浏览器。面具也是指纹。'
+    });
+    dp += 1;
+  }
+
+  /* 5 — HOW MUCH IS LEFT (battery) */
+  if (d.battery) {
+    const chg = d.battery.charging ? '充电中' : '未在充电';
+    /* The 100%-charging signature is shared by fully-charged plugged-in
+       laptops and desktops with no battery at all. Acknowledge the
+       ambiguity in prose rather than guess wrong. */
+    let bP;
+    if (d.battery.indistinguishable) {
+      bP = '你的设备报告的是 100%，充电中——而对于一个网页来说，这和“根本没有电池”看起来一模一样。我们无法判断你是满电插着电源的笔记本，还是没有电池的台式机，别的网站也一样。站在这一侧，两者无从区分。';
+    } else {
+      bP = '你的电量是 ' + d.battery.level + '%。当前' + chg + '。';
+    }
+    bP += ' 2015 年，研究者证明，电量百分比加上放电时间，已经足够在多个网站之间追踪用户长达三十分钟。你此刻精确的电量，本身就是指纹。Firefox 在 2016 年移除了这个 API。你的浏览器仍然在暴露它。';
+    obs.push({
+      label: '还剩多少',
+      datum: '电量：' + d.battery.level + '% · ' + chg,
+      prose: bP
+    });
+    dp += 2;
+  } else {
+    obs.push({
+      label: '还剩多少',
+      datum: '电量：已隐藏',
+      prose: '你的浏览器把电量藏了起来。Firefox 在 2016 年彻底移除了这个 API，因为研究者证明它可以在没有 Cookie、没有同意的情况下跨站追踪访客。这个 API 仍然写在规范里，只是被藏了起来——对你如此，对任何想打听它的网页也是。'
+    });
+    dp += 1;
+  }
+
+  /* 6 — WHAT YOU SPEAK */
+  let langStr = d.langPretty;
+  if (d.otherLangs.length > 0) langStr += ' · ' + d.otherLangs.join(' · ');
+  let lP = '你的浏览器主语言是 ' + d.langPretty + '。';
+  if (d.otherLangs.length > 0) lP += ' 它还带着 ' + d.otherLangs.join(' 和 ') + '。这告诉我们的不只是你会说什么语言，很多时候还包括你在哪里长大、住过哪里，或者和谁一起生活。';
+  lP += ' 这些信息会出现在每一个 HTTP 请求头里。只要你一直在用这个浏览器，它就一直在这样做。';
+  obs.push({ label: '你说什么语言', datum: langStr, prose: lP });
+  dp += 1 + d.otherLangs.length;
+
+  /* 7 — HOW YOU ARE HOLDING IT (mobile) */
+  if (d.orientation) {
+    const beta = d.orientation.beta;
+    let posture = '倾斜着';
+    if      (beta > 70) posture = '几乎竖直，你大概正把它举在脸前';
+    else if (beta > 40) posture = '斜着，你可能正坐着';
+    else if (beta < 20) posture = '几乎平放着，你可能正躺着';
+    obs.push({
+      label: '你是怎么拿着它的',
+      datum: beta + '° 偏离水平',
+      prose: '你的设备现在是' + posture + '。陀螺仪在未经你许可的情况下报告了这一点。一个网站可以借此推断你是在站着、坐着、走着，还是躺在床上。我们看得出来。我们选择不再多说。'
+    });
+    dp += 2;
+  } else if (d.orientationBlocked) {
+    let line = '你的设备把陀螺仪读数收了回去。Apple 在 2019 年加上了这道限制，因为研究者证明网页可以在不经许可的情况下读取陀螺仪，甚至仅凭震动推断你在另一台设备上的输入。这个保护只适用于运动传感器。这个页面上的其他一切，你的设备都照样交出来了。';
+    if (d.coarseOrientation) {
+      const coarseMap = {
+        'portrait-primary': '竖屏（正向）',
+        'portrait-secondary': '竖屏（反向）',
+        'landscape-primary': '横屏（正向）',
+        'landscape-secondary': '横屏（反向）'
+      };
+      line += ' 不过，你的屏幕方向是 ' + (coarseMap[d.coarseOrientation] || d.coarseOrientation.replace(/-/g, ' ')) + '。这个信号不需要权限，你的设备很爽快地发了出来。';
+    }
+    obs.push({
+      label: '你是怎么拿着它的',
+      datum: '陀螺仪：被 iOS 隐藏',
+      prose: line
+    });
+    dp += 1;
+  }
+
+  /* 8 — WHAT YOU CARRY (fonts)
+     The "nearly unique" claim only holds on desktop, where users add
+     fonts via apps and OS over time. On iOS and Android the stock font
+     list is essentially uniform across devices in the same OS version.
+     Hedge the prose accordingly — the page should not overclaim. */
+  if (d.installed.length > 0) {
+    const stockOS = d.os === 'iOS' || d.os === 'Android';
+    let fP;
+    if (stockOS) {
+      fP = '在常用于指纹识别探测的 17 种字体里，你的设备装着这些字型。在 ' + d.os + ' 上，系统自带字体集在同版本设备间几乎一致，所以单靠这份列表对你的识别力不强。但把它和 GPU、屏幕尺寸、语言、时区放在一起，范围就会迅速缩小。';
+    } else {
+      fP = '在常用于指纹识别探测的 17 种字体里，你的设备装着这些字型。在桌面端，具体的字体组合往往几乎是唯一的。字体会随着应用安装和系统更新一点点累积，最后变成一枚由字母组成的指纹。';
+    }
+    fP += ' 广告网络会把它和你的屏幕尺寸、语言、时区、GPU 组合起来，在不同网站之间识别同一台设备。没有 Cookie。没有账号。没有名字。这个技术叫浏览器指纹识别。在大多数司法辖区，它都是合法的。你访问的大多数页面都在这样做。没有哪个会提起这件事。';
+    obs.push({
+      label: '你携带着什么',
+      datum: d.installed.join(' · '),
+      prose: fP
+    });
+    dp += d.installed.length;
+  }
+
+  /* 9 — WHAT YOU ALLOW (cookies + storage + preferences merged) */
+  const allowParts = [];
+  allowParts.push(d.cookiesEnabled ? 'Cookie：已启用' : 'Cookie：已禁用');
+  allowParts.push(d.darkMode ? '深色模式' : '浅色模式');
+  if (d.reducedMotion) allowParts.push('减少动态效果');
+  if (d.doNotTrack)    allowParts.push('请勿跟踪');
+  if (d.storage)       allowParts.push('他站已存储 ' + d.storage.used + ' MB');
+
+  let stP = '';
+  if (d.cookiesEnabled) {
+    stP += '你的浏览器接受 Cookie。网站可以在你设备上写入小文件，在你离开后继续存在：它们会在你回来时认出你，会跟着你跨站移动，会记住你看过什么、差点买了什么、犹豫了多久。我们没有写入一个。';
+  } else {
+    stP += '你的浏览器禁用了 Cookie。这很少见。要么是你有意这么做，要么是别人替你配置好的。不管哪种情况，它都让网络更难记住你。';
+  }
+  if (d.storage) {
+    /* Browsers report the per-origin quota in MB; Chrome can return tens
+       of GB on a roomy disk, which reads as implausible. Express in GB
+       once we cross 1024 MB so the number is legible. */
+    let quotaStr;
+    if (d.storage.quota >= 1024) {
+      const gb = d.storage.quota / 1024;
+      quotaStr = (gb >= 10 ? Math.round(gb) : gb.toFixed(1)) + ' GB';
+    } else {
+      quotaStr = d.storage.quota + ' MB';
+    }
+    stP += ' 你的浏览器本来允许这个页面往你的设备里写入最多 ' + quotaStr + '——一间只属于我们自己的小房间，就像它会发给每个你访问的网站一样。我们把它留空了。大多数页面不会。';
+  }
+  stP += ' 你的系统告诉我们，你偏好' + (d.darkMode ? '深色' : '浅色') + '界面。';
+  if (d.reducedMotion) {
+    stP += ' 你或你的系统请求了减少动态效果。这可能只是偏好，也可能是医疗需要。但无论如何，我们知道。';
+  }
+  if (d.doNotTrack) {
+    stP += ' 你请求过“不要跟踪”。你的浏览器会在每次加载页面时带上这个请求。几乎没有网站会理会它。这个标准从 2009 年起就存在，却从未真正可执行。对隐私的偏好，讽刺地成了我们又知道的一件事。';
+  } else {
+    stP += ' 你没有开启“请勿跟踪”。这是默认状态。这意味着，要么你选择不开，要么你不知道它的存在，要么你知道开了也没有区别。这三种可能，都透露信息。';
+  }
+  stP += ' 这个页面没有在你的设备上存任何东西。你一关掉这个标签页，它就会忘记你存在过。';
+  obs.push({ label: '你允许了什么', datum: allowParts.join(' · '), prose: stP });
+  dp += allowParts.length;
+
+  /* 10 — WHERE YOU WERE BEFORE (referrer, conditional) */
+  if (d.referrer) {
+    let ref = d.referrer;
+    try { ref = new URL(d.referrer).hostname; } catch (e) {}
+    obs.push({
+      label: '你之前在哪里',
+      datum: ref,
+      prose: '你是从 ' + ref + ' 来到这里的。你的浏览器把你在上一页阅读的地址告诉了我们。你点开的每一个链接，都会把“你刚刚从哪里来”告诉目的地。你刚离开的页面知道你离开了，这个页面知道你从哪来。两边都没有征求你的同意。'
+    });
+    dp += 1;
+  }
+
+  dataPoints = dp;
+  return obs;
+}
+
+/* ============================================================
+   RENDER — choreography with continuous-build climax
+   ============================================================ */
+
+async function render() {
+  const d = await collect();
+  const obs = build(d);
+
+  const container = document.getElementById('observations');
+  const closingEl = document.getElementById('closing');
+  const footerEl  = document.getElementById('footer');
+  const scanEl    = document.getElementById('scanning');
+  const counterEl = document.getElementById('liveCounter');
+  const dossierEl = document.getElementById('dossierRule');
+
+  const titleEl = document.getElementById('title');
+  if (prefersReducedMotion) titleEl.classList.add('no-flicker');
+  else titleEl.classList.add('flicker');
+
+  let html = '';
+  obs.forEach((o, i) => {
+    if (i > 0) html += '<div class="divider" data-i="' + i + '"></div>';
+    html += '<div class="obs" data-i="' + i + '">' +
+            '<div class="obs-label">' + o.label + '</div>' +
+            '<div class="obs-datum">' + o.datum + '</div>' +
+            '<div class="obs-prose">' + o.prose + '</div>' +
+            '</div>';
+  });
+  container.innerHTML = html;
+
+  const BASE = 5500;
+  const GAP  = 2200;
+
+  setTimeout(() => scanEl.classList.add('done'), BASE - 400);
+
+  const obsEls = container.querySelectorAll('.obs');
+  obsEls.forEach((el, i) => {
+    setTimeout(() => {
+      el.classList.add('visible');
+      const landed = i + 1;
+      const pct = Math.min(landed / obsEls.length, 1);
+      dossierEl.style.height = Math.round(pct * 100) + 'vh';
+
+      /* Drop a tick mark at the obs's document position — a manuscript marker
+         in the left margin. The fixed rule fills as a viewport meter; the
+         ticks are the milestones. */
+      const tick = document.createElement('div');
+      tick.className = 'dossier-tick';
+      const rect = el.getBoundingClientRect();
+      tick.style.top = (rect.top + window.scrollY + 14) + 'px';
+      document.body.appendChild(tick);
+      requestAnimationFrame(() => tick.classList.add('visible'));
+    }, BASE + i * GAP);
+  });
+  container.querySelectorAll('.divider').forEach((el, i) => {
+    setTimeout(() => el.classList.add('visible'), BASE + (i + 1) * GAP - 700);
+  });
+
+  /* Live counter — appears partway through */
+  setTimeout(() => { counterVisible = true; counterEl.classList.add('visible'); }, BASE + 3 * GAP);
+
+  /* ── CLIMAX — continuous build, no long gaps ───────────── */
+
+  const climaxStart = BASE + obs.length * GAP + 1500;
+
+  /* Iconic tally — count-up + per-visitor barcode */
+  setTimeout(() => {
+    const bars = deterministicBars(d);
+    const barcodeSvg = renderBarcodeSvg(bars);
+
+    const tally = document.createElement('div');
+    tally.className = 'closing-tally';
+    tally.innerHTML =
+      '<div class="closing-tally-number" id="tallyNumber">0</div>' +
+      '<div class="closing-tally-barcode" role="img" aria-label="你的专属指纹条码">' + barcodeSvg + '</div>' +
+      '<div class="closing-tally-label">数据点</div>' +
+      '<div class="closing-tally-line">提问 0 次 &nbsp;·&nbsp; 在你的设备上存储 0 字节</div>';
+    closingEl.appendChild(tally);
+    requestAnimationFrame(() => {
+      tally.classList.add('visible');
+      /* Begin the count-up after the fade-in starts taking hold */
+      setTimeout(() => animateCountUp(document.getElementById('tallyNumber'), dataPoints, 1400), 400);
+    });
+  }, climaxStart);
+
+  /* Thesis */
+  setTimeout(() => {
+    const thesis = document.createElement('div');
+    thesis.className = 'closing-thesis';
+    thesis.innerHTML =
+      '你访问过的每一个页面，至少都知道这么多。<br>' +
+      '大多数知道得更多。<br>' +
+      '没有一个告诉过你。';
+    closingEl.appendChild(thesis);
+    requestAnimationFrame(() => thesis.classList.add('visible'));
+  }, climaxStart + 1800);
+
+  /* Behavioral reveal — folded into the climax. Body text is captured
+     the moment the block enters the viewport, so the numbers reflect
+     the visitor's actual reading journey, not the render time. */
+  setTimeout(() => {
+    const beh = document.createElement('div');
+    beh.className = 'closing-behavioral';
+    beh.innerHTML =
+      '<span class="obs-label">还有一件事</span>' +
+      '<span class="obs-datum">你还在这里。</span>' +
+      '<span class="closing-behavioral-body" id="behavioralBody"></span>';
+    closingEl.appendChild(beh);
+    requestAnimationFrame(() => beh.classList.add('visible'));
+
+    captureWhenSeen(beh, () => {
+      const elapsed = ((performance.now() - T0) / 1000).toFixed(0);
+      const isTouch = (navigator.maxTouchPoints || 0) > 0;
+      const pauseNote = longestPause > 3
+        ? ' 你有一次停了 ' + longestPause.toFixed(0) + ' 秒，比其他任何地方都久。'
+        : '';
+      const tabNote = tabSwitches > 0
+        ? '你离开了 ' + tabSwitches + ' 次，而且每次都回来了。你的每一次离开，我们都看见了。'
+        : '你从没离开过这个标签页。若你离开过，我们会知道。';
+      const cursorNote = mouseMovements > 20
+        ? ' 你的' + (isTouch ? '手指' : '光标') + '移动了 ' + mouseMovements.toLocaleString() + ' 次。'
+        : '';
+      const clickNote = clicks > 1
+        ? ' 你' + (isTouch ? '点按' : '点击') + '了 ' + clicks + ' 次。'
+        : '';
+
+      document.getElementById('behavioralBody').innerHTML =
+        '你已经在这个页面停留了 ' + elapsed + ' 秒。你向下滚动到了页面的 ' + scrollMax + '%。' +
+        tabNote + cursorNote + clickNote + pauseNote +
+        ' 我们不是在计数。我们一直都在计数。';
+    });
+  }, climaxStart + 3800);
+
+  /* Final — same capture-on-sight pattern. The "It did this in N seconds"
+     line reflects the visitor's actual time-on-page when they reach it. */
+  setTimeout(() => {
+    const fin = document.createElement('div');
+    fin.className = 'closing-final';
+    fin.innerHTML =
+      '它已经足够具体地识别出你的设备，足以把它和互联网上的大多数其他设备区分开来。<br><br>' +
+      '<span class="closing-final-time" id="finalTime"></span><br><br>' +
+      '<span class="closing-final-tag">这就是免费的代价。</span>';
+    closingEl.appendChild(fin);
+    requestAnimationFrame(() => fin.classList.add('visible'));
+
+    captureWhenSeen(fin, () => {
+      const elapsed = ((performance.now() - T0) / 1000).toFixed(0);
+      document.getElementById('finalTime').textContent = '它只用了 ' + elapsed + ' 秒。';
+      beacon('TakenFinalLine');
+    });
+  }, climaxStart + 5800);
+
+  /* View source — the closing of the loop */
+  setTimeout(() => {
+    const src = document.createElement('div');
+    src.className = 'closing-source-line';
+    src.innerHTML =
+      '打开源代码。读一遍。我们没什么好藏的。大多数页面说不了这句话。';
+    closingEl.appendChild(src);
+    requestAnimationFrame(() => src.classList.add('visible'));
+
+    const shareBtn = document.createElement('button');
+    shareBtn.className = 'share-trigger';
+    shareBtn.type = 'button';
+    shareBtn.id = 'shareBtn';
+    shareBtn.textContent = '告诉别人';
+    shareBtn.addEventListener('click', openShare);
+    closingEl.appendChild(shareBtn);
+
+    const sourcesBtn = document.createElement('button');
+    sourcesBtn.className = 'sources-trigger';
+    sourcesBtn.type = 'button';
+    sourcesBtn.id = 'sourcesBtn';
+    sourcesBtn.textContent = '来源与坦白';
+    sourcesBtn.addEventListener('click', openSources);
+    closingEl.appendChild(sourcesBtn);
+  }, climaxStart + 7600);
+
+  /* Footer */
+  setTimeout(() => footerEl.classList.add('visible'), climaxStart + 9400);
+}
+
+/* ============================================================
+   LIVE COUNTER
+   ============================================================ */
+
+function tick() {
+  if (!counterVisible) { requestAnimationFrame(tick); return; }
+  const el = document.getElementById('liveCounter');
+  const sec = ((performance.now() - T0) / 1000).toFixed(0);
+  el.innerHTML =
+    '<span>' + sec + '秒</span> 停留 · ' +
+    '<span>' + scrollMax + '%</span> 已滚动 · ' +
+    '<span>' + tabSwitches + '</span> 次切换标签页 · ' +
+    '<span>' + mouseMovements.toLocaleString() + '</span> 次移动 · ' +
+    '<span>' + clicks + '</span> 次点击';
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+/* ============================================================
+   SHARE & SOURCES MODALS
+   ============================================================ */
+
+const shareModal      = document.getElementById('shareModal');
+const sourcesModal    = document.getElementById('sourcesModal');
+const sourcesCloseBtn = document.getElementById('sourcesCloseBtn');
+
+function openShare() {
+  document.getElementById('share-preview-tally').textContent =
+    dataPoints + ' 个数据点 · 提问 0 次';
+  const copyBtn = document.getElementById('copy-link-btn');
+  if (copyBtn) copyBtn.textContent = '复制链接';
+  shareModal.classList.add('show');
+}
+
+function openSources() {
+  sourcesModal.classList.add('show');
+}
+
+document.getElementById('sourcesBtn2').addEventListener('click', openSources);
+
+sourcesCloseBtn.addEventListener('click', () => sourcesModal.classList.remove('show'));
+sourcesModal.addEventListener('click', e => { if (e.target === sourcesModal) sourcesModal.classList.remove('show'); });
+
+document.getElementById('shareCloseBtn').addEventListener('click', () => shareModal.classList.remove('show'));
+shareModal.addEventListener('click', e => { if (e.target === shareModal) shareModal.classList.remove('show'); });
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    sourcesModal.classList.remove('show');
+    shareModal.classList.remove('show');
+  }
+});
+
+function openShareWindow(url) {
+  window.open(url, '_blank', 'noopener,noreferrer,width=640,height=600');
+}
+
+function doShare(platform) {
+  const text = '一个网页刚刚在没有征求我同意的情况下，把它从我身上知道的一切都告诉了我。它知道我的城市、我的设备、我的 GPU，以及我在滚动前犹豫了多久。';
+
+  if (platform === 'x') {
+    const t = encodeURIComponent(text + '\n\n');
+    const u = encodeURIComponent(SHARE_URL);
+    openShareWindow('https://twitter.com/intent/tweet?text=' + t + '&url=' + u);
+  } else if (platform === 'bluesky') {
+    const t = encodeURIComponent(text + '\n\n' + SHARE_URL);
+    openShareWindow('https://bsky.app/intent/compose?text=' + t);
+  } else if (platform === 'linkedin') {
+    openShareWindow('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(SHARE_URL));
+  } else if (platform === 'facebook') {
+    openShareWindow('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(SHARE_URL));
+  } else if (platform === 'reddit') {
+    const title = encodeURIComponent('一个网页在没有征求我同意的情况下，把它知道的关于我的一切都告诉了我');
+    openShareWindow('https://reddit.com/submit?url=' + encodeURIComponent(SHARE_URL) + '&title=' + title);
+  } else if (platform === 'whatsapp') {
+    const t = encodeURIComponent(text + '\n\n' + SHARE_URL);
+    openShareWindow('https://wa.me/?text=' + t);
+  } else if (platform === 'copy') {
+    const copyBtn = document.getElementById('copy-link-btn');
+    const onDone = () => {
+      if (copyBtn) copyBtn.textContent = '已复制 ✓';
+      setTimeout(() => { if (copyBtn) copyBtn.textContent = '复制链接'; }, 2500);
+    };
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(SHARE_URL).then(onDone, onDone);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = SHARE_URL;
+      ta.style.cssText = 'position:fixed;opacity:0;';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (_) {}
+      document.body.removeChild(ta);
+      onDone();
+    }
+  }
+}
+
+/* ============================================================
+   FOOTER EDITION
+   ============================================================ */
+
+document.getElementById('footer-edition').textContent =
+  '第 IV 卷 · ' + new Date().toLocaleString('zh-CN', { year: 'numeric', month: 'long' });
+
+/* ============================================================
+   GO
+   ============================================================ */
+
+render();
+
+</script>
+</body>
+</html>
