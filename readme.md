@@ -27,3 +27,5 @@ gesture-pic.html：手势控制相册
 markdown-reader.html: markdown文件读取显示
 
 taken.html: 一个普通网页，到底能知道你多少信息
+
+hospital-system.html: 医疗相关系统介绍

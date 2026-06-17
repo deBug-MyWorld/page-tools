@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="医疗行业主要信息系统介绍 - HIS, EMR, LIS, PACS, RIS, CIS, 医保结算, DRG/DIP 等核心系统">
+    <title>智慧医疗 | 核心信息系统全景（含医保）</title>
+    <!-- Font Awesome 6 免费图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, #f0f7fc 0%, #eef2f8 100%);
+            color: #1a2c3e;
+            line-height: 1.4;
+            scroll-behavior: smooth;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #d9e2ec;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2c7da0;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1f5e7a;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(44, 125, 160, 0.12);
+            backdrop-filter: blur(2px);
+            color: #1f6390;
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            letter-spacing: 0.5px;
+            margin-bottom: 1.2rem;
+            border: 1px solid rgba(44, 125, 160, 0.25);
+        }
+        .hero h1 {
+            font-size: 2.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1f4e6e, #2c8eb3);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+            letter-spacing: -0.3px;
+        }
+        .hero-sub {
+            font-size: 1.2rem;
+            color: #2c586e;
+            max-width: 720px;
+            margin: 0 auto;
+            font-weight: 500;
+            line-height: 1.5;
+            border-left: 4px solid #2c7da0;
+            padding-left: 1.2rem;
+            background: rgba(255,255,255,0.5);
+            border-radius: 0 12px 12px 0;
+        }
+        .hero-desc {
+            font-size: 1rem;
+            color: #3a6279;
+            margin-top: 1rem;
+            max-width: 760px;
+            margin-left: auto;
+            margin-right: auto;
+            opacity: 0.9;
+        }
+
+        .systems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
+            gap: 2rem;
+            margin: 2.8rem 0 2rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(2px);
+            border-radius: 28px;
+            box-shadow: 0 12px 28px -8px rgba(0, 32, 48, 0.12);
+            transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+            overflow: hidden;
+            border: 1px solid rgba(44, 125, 160, 0.2);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 24px 40px -12px rgba(18, 82, 110, 0.25);
+            border-color: rgba(44, 125, 160, 0.5);
+            background: #ffffff;
+        }
+        .card-header {
+            padding: 1.6rem 1.6rem 0.8rem 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 2px solid #eaf0f5;
+        }
+        .card-icon {
+            font-size: 2.8rem;
+            color: #2c7da0;
+            transition: transform 0.2s ease;
+            width: 3.2rem;
+            text-align: center;
+        }
+        .card:hover .card-icon {
+            transform: scale(1.02);
+        }
+        .card-title {
+            flex: 1;
+        }
+        .card-title h3 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: -0.2px;
+            color: #1e4b66;
+            line-height: 1.2;
+        }
+        .card-title .full-name {
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: #618ea3;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            margin-top: 0.2rem;
+        }
+        .card-body {
+            padding: 1.4rem 1.6rem 1.6rem;
+            flex: 1;
+        }
+        .desc {
+            font-size: 0.95rem;
+            color: #2c485c;
+            line-height: 1.5;
+            margin-bottom: 1.2rem;
+            font-weight: 500;
+        }
+        .features {
+            list-style: none;
+            margin-top: 0.8rem;
+        }
+        .features li {
+            font-size: 0.85rem;
+            padding: 0.5rem 0 0.2rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            color: #2b5d78;
+            border-bottom: 1px dashed #e2edf4;
+        }
+        .features li i {
+            width: 1.3rem;
+            color: #2c9baf;
+            font-size: 0.9rem;
+        }
+        .features li:last-child {
+            border-bottom: none;
+        }
+        .card-footer {
+            padding: 0.6rem 1.6rem 1.4rem;
+            font-size: 0.7rem;
+            color: #7d9fb0;
+            border-top: 1px solid #eef3f8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card-footer i {
+            font-size: 0.75rem;
+        }
+
+        .insight-section {
+            background: linear-gradient(105deg, #ffffff 0%, #f9feff 100%);
+            border-radius: 2rem;
+            padding: 1.8rem 2rem;
+            margin: 2.5rem 0 1.5rem;
+            border: 1px solid rgba(44, 125, 160, 0.25);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+        }
+        .insight-title {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1a4e6b;
+            margin-bottom: 1rem;
+        }
+        .insight-title i {
+            font-size: 1.8rem;
+            color: #2c9baf;
+        }
+        .insight-text {
+            color: #2a5d78;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        .badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+        .tech-badge {
+            background: #e2f0f7;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #1f6d93;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 1.8rem;
+            border-top: 1px solid rgba(44, 125, 160, 0.2);
+            font-size: 0.8rem;
+            color: #54809b;
+        }
+
+        @media (max-width: 780px) {
+            .container {
+                padding: 1.2rem 1rem 2rem;
+            }
+            .hero h1 {
+                font-size: 2.1rem;
+            }
+            .hero-sub {
+                font-size: 1rem;
+                padding-left: 0.8rem;
+            }
+            .card-header {
+                padding: 1.2rem 1.2rem 0.6rem;
+            }
+            .card-title h3 {
+                font-size: 1.4rem;
+            }
+            .card-icon {
+                font-size: 2.2rem;
+            }
+            .card-body {
+                padding: 1rem 1.2rem 1.2rem;
+            }
+            .systems-grid {
+                gap: 1.2rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            .card-title .full-name {
+                font-size: 0.7rem;
+            }
+        }
+        .accent-text {
+            color: #2c7da0;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <div class="hero-badge">
+            <i class="fas fa-microchip"></i> 新一代医疗信息化架构 · 医保融合
+        </div>
+        <h1>
+            <i class="fas fa-hospital-user" style="color: #2c7da0; background: none; font-size: 2.2rem; vertical-align: middle;"></i> 
+            医疗行业主要系统
+        </h1>
+        <div class="hero-sub">
+            智慧医院 · 数据驱动 · 协同高效 · 医保智控
+        </div>
+        <div class="hero-desc">
+            从诊疗到管理，从影像到检验，再到医保支付与监管，核心系统构筑现代化医院数字神经中枢。<br>
+            以下为行业广泛部署的八大关键系统，助力精准医疗、卓越运营与合规控费。
+        </div>
+    </div>
+
+    <div class="systems-grid">
+        <!-- 1. HIS -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fas fa-hospital-user"></i></div>
+                <div class="card-title">
+                    <h3>HIS</h3>
+                    <div class="full-name">医院信息系统</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="desc">医院核心业务枢纽，整合人、财、物与医疗流程，打通挂号、收费、药房、住院全链路。</div>
+                <ul class="features">
+                    <li><i class="fas fa-credit-card"></i> 门诊挂号/收费/医保结算</li>
+                    <li><i class="fas fa-procedures"></i> 住院登记与床位管理</li>
+                    <li><i class="fas fa-capsules"></i> 药库及物资供应链</li>
+                    <li><i class="fas fa-chart-line"></i> 综合运营分析与决策支持</li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <i class="fas fa-database"></i> 数据中台 · 业务闭环
+            </div>
+        </div>
+
+        <!-- 2. EMR -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fas fa-notes-medical"></i></div>
+                <div class="card-title">
+                    <h3>EMR</h3>
+                    <div class="full-name">电子病历系统</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="desc">患者诊疗全过程的数字化记录，医嘱、病程、护理信息实时共享，提升医疗质量与安全。</div>
+                <ul class="features">
+                    <li><i class="fas fa-file-alt"></i> 结构化病历与模板化录入</li>
+                    <li><i class="fas fa-prescription-bottle"></i> 智能医嘱管理与闭环追溯</li>
+                    <li><i class="fas fa-chart-simple"></i> 临床路径与质控提醒</li>
+                    <li><i class="fas fa-shield-alt"></i> 数据加密及分级权限管控</li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <i class="fas fa-stethoscope"></i> 临床文书 · 知识库联动
+            </div>
+        </div>
+
+        <!-- 3. LIS -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fas fa-flask"></i></div>
+                <div class="card-title">
+                    <h3>LIS</h3>
+                    <div class="full-name">实验室信息系统</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="desc">检验科自动化核心，从样本采集、仪器联机到报告审核，实现高效精准的检验流程。</div>
+                <ul class="features">
+                    <li><i class="fas fa-vial"></i> 条码追踪与样本全生命周期管理</li>
+                    <li><i class="fas fa-microscope"></i> 检验仪器双向对接，自动抓取结果</li>
+                    <li><i class="fas fa-chart-bar"></i> 室内质控与危急值预警</li>
+                    <li><i class="fas fa-print"></i> 多格式报告推送(临床/患者端)</li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <i class="fas fa-chart-line"></i> 精准检验 · 质控先行
+            </div>
+        </div>
+
+        <!-- 4. PACS -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fas fa-x-ray"></i></div>
+                <div class="card-title">
+                    <h3>PACS</h3>
+                    <div class="full-name">影像归档与通信系统</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="desc">医学影像“大管家”，支持CT、MRI、DR等海量影像存储、调阅、后处理与远程会诊。</div>
+                <ul class="features">
+                    <li><i class="fas fa-cloud-upload-alt"></i> 标准DICOM影像采集与归档</li>
+                    <li><i class="fas fa-eye"></i> 多终端调阅及三维重建</li>
+                    <li><i class="fas fa-exchange-alt"></i> 跨院区影像共享与远程诊断</li>
+                    <li><i class="fas fa-chart-network"></i> AI辅助病灶智能识别</li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <i class="fas fa-hdd"></i> 无损压缩 · 秒级调阅
+            </div>
+        </div>
+
+        <!-- 5. RIS -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fas fa-radiation"></i></div>
+                <div class="card-title">
+                    <h3>RIS</h3>
+                    <div class="full-name">放射科信息系统</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="desc">专为放射科业务流程设计，与PACS无缝整合，优化患者登记、检查排队及报告管理。</div>
+                <ul class="features">
+                    <li><i class="fas fa-calendar-check"></i> 检查预约与排队叫号</li>
+                    <li><i class="fas fa-file-signature"></i> 结构化报告模板及电子签批</li>
+                    <li><i class="fas fa-charging-station"></i> 设备工作列表(MPPS)自动化</li>
+                    <li><i class="fas fa-chart-pie"></i> 科室绩效与辐射剂量统计</li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <i class="fas fa-microphone-alt"></i> 影像流程优化 · 报告智能质控
+            </div>
+        </div>
+
+        <!-- 6. CIS -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fas fa-heartbeat"></i></div>
+                <div class="card-title">
+                    <h3>CIS</h3>
+                    <div class="full-name">临床信息系统</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="desc">聚焦病区与护理单元，生命体征采集、护理计划、临床决策辅助，提升照护连续性与安全。</div>
+                <ul class="features">
+                    <li><i class="fas fa-bed"></i> 移动护理(PDA)与体征录入</li>
+                    <li><i class="fas fa-chart-line"></i> 临床路径执行及变异分析</li>
+                    <li><i class="fas fa-clinic-medical"></i> 重症监护(ICU)实时预警</li>
+                    <li><i class="fas fa-hand-holding-heart"></i> 护理计划与健康宣教推送</li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <i class="fas fa-waveform"></i> 床旁闭环 · 智能护理决策
+            </div>
+        </div>
+
+        <!-- 7. 医保结算与监管系统 (新增) -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fas fa-file-invoice-dollar"></i></div>
+                <div class="card-title">
+                    <h3>医保结算</h3>
+                    <div class="full-name">医保结算与监管系统</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="desc">一站式医保费用结算、智能对账、实时审核与基金使用监管，降低骗保风险，确保合规支付。</div>
+                <ul class="features">
+                    <li><i class="fas fa-money-check-alt"></i> 门诊/住院医保实时结算与分解</li>
+                    <li><i class="fas fa-balance-scale"></i> 自动对账与异常交易预警</li>
+                    <li><i class="fas fa-shield-virus"></i> 智能审核规则库（诊疗/药品/耗材）</li>
+                    <li><i class="fas fa-chart-simple"></i> 医保基金使用分析与合规报表</li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <i class="fas fa-handshake"></i> 三方联动 · 控费增效
+            </div>
+        </div>
+
+        <!-- 8. DRG/DIP 智慧分组与支付系统 (新增) -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon"><i class="fas fa-layer-group"></i></div>
+                <div class="card-title">
+                    <h3>DRG/DIP</h3>
+                    <div class="full-name">智慧分组与支付系统</div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="desc">基于疾病诊断相关分组(DRG)及病种分值(DIP)，实现精准预分组、费用测算、绩效评价与支付改革。</div>
+                <ul class="features">
+                    <li><i class="fas fa-tags"></i> 自动分组（DRG/DIP）与权重测算</li>
+                    <li><i class="fas fa-calculator"></i> 医保支付标准与结算模拟</li>
+                    <li><i class="fas fa-chart-pie"></i> 科室成本核算与绩效评估</li>
+                    <li><i class="fas fa-arrow-trend-up"></i> 病种结构优化与医疗质量监控</li>
+                </ul>
+            </div>
+            <div class="card-footer">
+                <i class="fas fa-file-signature"></i> 支付改革 · 价值医疗
+            </div>
+        </div>
+    </div>
+
+    <!-- 补充说明：系统协同与医保融合 -->
+    <div class="insight-section">
+        <div class="insight-title">
+            <i class="fas fa-link"></i>
+            <span>系统协同 · 医保融合 · 智慧医疗新生态</span>
+        </div>
+        <div class="insight-text">
+            <p>🏥 现代医院以<span class="accent-text">HIS</span>为主干，连通<span class="accent-text">EMR</span>临床数据中心，并融合<span class="accent-text">LIS</span>、<span class="accent-text">PACS/RIS</span>的检查检验数据，由<span class="accent-text">CIS</span>赋能临床决策；<span class="accent-text">医保结算</span>与<span class="accent-text">DRG/DIP</span>系统则贯穿费用管理、支付改革与合规监管，形成“临床-运营-医保”全链路闭环。<br>
+            📈 行业趋势：集成平台(ESB)、医疗大数据、AI辅助决策、互联网医院、区域医保协同进一步打破信息孤岛，提升患者体验、医疗质量与基金使用效率。</p>
+            <div class="badge-group">
+                <span class="tech-badge"><i class="fas-regular fa-cloud"></i> 云原生架构</span>
+                <span class="tech-badge"><i class="fas fa-microchip"></i> 边缘计算</span>
+                <span class="tech-badge"><i class="fas fa-brain"></i> 临床CDSS</span>
+                <span class="tech-badge"><i class="fas fa-mobile-alt"></i> 移动医护</span>
+                <span class="tech-badge"><i class="fas fa-lock"></i> 隐私计算</span>
+                <span class="tech-badge"><i class="fas fa-file-invoice"></i> 医保大数据</span>
+                <span class="tech-badge"><i class="fas fa-chart-network"></i> DRG/DIP 智能分组</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <i class="fas fa-chart-network"></i> 医疗数字化转型 · 关键系统全景图（含医保） | 数据互联 守护健康<br>
+        <span style="font-size: 0.7rem; opacity: 0.7;">© 2025 智慧医疗信息化指南 | 基于最新行业标准及实践经验</span>
+    </div>
+</div>
+</body>
+</html>
