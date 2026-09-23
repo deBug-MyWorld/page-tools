@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Windows 开发环境安装手册（JDK21 / Maven / Git / Miniconda / NVM）</title>
+<style>
+/* ========== Reset & Base ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { min-height: 100%; scroll-behavior: smooth; }
+body {
+  position: relative;
+  font-family: -apple-system, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Segoe UI", "Noto Sans SC", sans-serif;
+  color: #1f2d3d;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  background: linear-gradient(160deg, #f8fafc 0%, #ffffff 45%, #cfe0f5 100%);
+  min-height: 100vh;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 45% 35% at 18% 8%, rgba(255,255,255,0.55) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 88% 90%, rgba(255,255,255,0.45) 0%, transparent 55%);
+}
+body > * { position: relative; z-index: 1; }
+
+/* ========== 顶部进度条 ========== */
+.progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 4px;
+  width: 0%;
+  background: linear-gradient(90deg, #3b82f6, #4f8ef7);
+  z-index: 100;
+  border-radius: 0 2px 2px 0;
+}
+
+/* ========== 侧边导航 ========== */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 268px;
+  height: 100vh;
+  overflow-y: auto;
+  background: #0f1e33;
+  color: #c9d6f3;
+  padding: 28px 0 40px;
+  z-index: 50;
+}
+.sidebar .brand {
+  padding: 0 22px 20px;
+  border-bottom: 1px solid rgba(201,214,243,0.18);
+  margin-bottom: 16px;
+}
+.sidebar .brand .b-title { font-size: 15px; font-weight: 800; color: #ffffff; letter-spacing: .5px; }
+.sidebar .brand .b-sub { font-size: 11px; color: #8fa6c8; margin-top: 4px; }
+.sidebar nav a {
+  display: block;
+  padding: 9px 22px 9px 30px;
+  font-size: 13.5px;
+  color: #b9c9e0;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: all .18s ease;
+}
+.sidebar nav a:hover { color: #ffffff; background: rgba(59,130,246,0.14); }
+.sidebar nav a.active { color: #ffffff; background: rgba(59,130,246,0.22); border-left-color: #4f8ef7; }
+.sidebar nav a .sec-no { display: inline-block; width: 26px; color: #4f8ef7; font-weight: 700; }
+.sidebar .side-foot {
+  margin-top: 18px; padding: 0 22px;
+  font-size: 11px; color: #6d85a8; line-height: 1.7;
+}
+
+/* ========== 主内容区 ========== */
+.main {
+  margin-left: 268px;
+  padding: 32px 56px 64px;
+}
+
+/* ========== 封面 Hero ========== */
+.title {
+  position: relative;
+  overflow: hidden;
+  padding: 54px 44px;
+  text-align: center;
+  background: linear-gradient(135deg, #1e3a5f 0%, #3b82f6 50%, #4f8ef7 100%);
+  color: #ffffff;
+  border-radius: 16px;
+  margin-bottom: 26px;
+  box-shadow: 0 6px 24px rgba(15,30,51,0.25);
+}
+.title::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 18% 82%, rgba(255,255,255,0.14) 0%, transparent 60%),
+    radial-gradient(ellipse 55% 40% at 82% 18%, rgba(255,255,255,0.10) 0%, transparent 55%);
+  pointer-events: none;
+}
+.title > * { position: relative; z-index: 1; }
+.title h1 { font-size: 30px; font-weight: 800; margin: 0 0 12px 0; letter-spacing: 1px; color: #ffffff; }
+.title .accent-line {
+  width: 56px; height: 3px; background: rgba(255,255,255,0.9);
+  margin: 0 auto 16px; border-radius: 2px;
+}
+.title p { font-size: 15px; color: rgba(255,255,255,0.9); margin: 0; line-height: 1.8; }
+.title .badges { margin-top: 18px; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+.title .badges span {
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.16);
+  border: 1px solid rgba(255,255,255,0.35);
+  font-size: 12px;
+  color: #ffffff;
+}
+
+/* ========== 章节标题 ========== */
+h1.heading {
+  font-size: 26px;
+  color: #0f1e33;
+  margin: 40px 0 18px 0;
+  font-weight: 800;
+  border-left: 4px solid #3b82f6;
+  padding-left: 16px;
+}
+h2.heading {
+  font-size: 20px;
+  color: #0f1e33;
+  margin: 30px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #c9d6f3;
+  font-weight: 700;
+}
+h3.heading {
+  font-size: 17px;
+  color: #2563eb;
+  margin: 22px 0 10px;
+  font-weight: 700;
+}
+
+/* ========== 正文 / 列表 ========== */
+.paragraph { font-size: 15px; color: #1f2d3d; line-height: 1.85; margin: 0 0 14px 0; }
+.list { margin: 0 0 16px 0; padding-left: 24px; font-size: 15px; color: #1f2d3d; line-height: 1.85; }
+.list li { margin-bottom: 7px; }
+.list li::marker { color: #3b82f6; }
+.list b { color: #0f1e33; }
+.lead { font-size: 15px; color: #5b6b80; margin: 0 0 18px 0; }
+
+/* ========== callout ========== */
+.callout {
+  margin: 0 0 18px 0;
+  padding: 15px 22px;
+  background: #e8f0fe;
+  border-left: 4px solid #3b82f6;
+  border-radius: 8px;
+}
+.callout[data-variant="warning"] { background: #FFF3E0; border-left-color: #d97706; }
+.callout[data-variant="tip"] { background: #eef5ff; border-left-color: #16a34a; }
+.callout p { font-size: 14.5px; color: #1f2d3d; margin: 0; line-height: 1.85; }
+.callout p + p { margin-top: 8px; }
+.callout b { color: #0f1e33; }
+.callout[data-variant="warning"] b { color: #8c3a10; }
+
+/* ========== 步骤条 ========== */
+.timeline { list-style: none; padding: 0; margin: 0 0 18px 0; }
+.timeline li {
+  position: relative;
+  padding-left: 32px;
+  padding-bottom: 20px;
+  border-left: 2px solid #c9d6f3;
+  margin-left: 7px;
+}
+.timeline li:last-child { border-left-color: transparent; padding-bottom: 0; }
+.timeline li::before {
+  content: '';
+  position: absolute;
+  left: -8px; top: 4px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: #3b82f6;
+  border: 3px solid #e8f0fe;
+  box-shadow: 0 0 0 2px #3b82f6;
+}
+.timeline li .step-title { font-size: 15px; font-weight: 700; color: #0f1e33; display: block; margin-bottom: 4px; }
+.timeline li .step-title .step-badge {
+  display: inline-block;
+  background: #3b82f6;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 12px;
+  padding: 1px 9px;
+  margin-right: 8px;
+  vertical-align: 1px;
+}
+.timeline li p { font-size: 14.5px; color: #1f2d3d; margin: 0 0 8px 0; line-height: 1.8; }
+.timeline li p.muted { color: #5b6b80; font-size: 13.5px; }
+
+/* ========== code ========== */
+.code {
+  background: #0f1e33;
+  color: #e2e8f0;
+  padding: 14px 20px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  overflow-x: auto;
+  margin: 0 0 14px 0;
+  font-family: 'Cascadia Code', 'Fira Code', 'SF Mono', 'Source Code Pro', Consolas, monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.code .c-comment { color: #7f9cc9; }
+.code .c-cmd { color: #93c5fd; }
+
+/* ========== 表格 ========== */
+.table { width: 100%; border-collapse: collapse; margin: 0 0 18px 0; font-size: 14px; }
+.table caption {
+  text-align: left;
+  font-size: 13px;
+  color: #5b6b80;
+  padding-bottom: 8px;
+}
+.table th {
+  background: linear-gradient(180deg, #c9d6f3, #e8f0fe);
+  color: #0f1e33;
+  font-weight: 700;
+  padding: 10px 12px;
+  border: 1px solid #dbe4ef;
+  text-align: left;
+}
+.table td {
+  padding: 9px 12px;
+  border: 1px solid #dbe4ef;
+  color: #1f2d3d;
+  vertical-align: top;
+}
+.table tbody tr:nth-child(even) { background: #f4f7fb; }
+.table td b { color: #0f1e33; }
+.table td code {
+  background: #e8f0fe;
+  color: #2563eb;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 12.5px;
+  font-family: 'Cascadia Code', Consolas, monospace;
+}
+
+/* ========== 指标卡 ========== */
+.stat {
+  text-align: center;
+  padding: 20px 14px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border-top: 3px solid #3b82f6;
+}
+.stat .v { font-size: 30px; color: #2563eb; font-weight: 800; }
+.stat .l { font-size: 12px; color: #5b6b80; margin-top: 4px; }
+
+/* ========== FAQ / 排查 ========== */
+.faq-item {
+  margin: 0 0 12px 0;
+  padding: 16px 20px;
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  border-left: 3px solid #c9d6f3;
+}
+.faq-item:hover { border-left-color: #3b82f6; }
+.faq-item .q { font-size: 14.5px; font-weight: bold; color: #0f1e33; margin: 0 0 6px 0; }
+.faq-item .a { font-size: 14.5px; color: #1f2d3d; margin: 0; padding-left: 4px; line-height: 1.85; }
+.faq-item .a code {
+  background: #e8f0fe;
+  color: #2563eb;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 12.5px;
+  font-family: 'Cascadia Code', Consolas, monospace;
+}
+
+/* ========== 尾页 ========== */
+.end_page {
+  margin-top: 30px;
+  padding: 48px 24px;
+  text-align: center;
+  background: linear-gradient(135deg, #c9d6f3 0%, #e8f0fe 100%);
+  border-radius: 16px;
+}
+.end_page h1 { font-size: 24px; color: #0f1e33; margin: 0 0 12px 0; font-weight: 800; }
+.end_page p { font-size: 14.5px; color: #5b6b80; margin: 0; line-height: 1.85; }
+
+/* ========== 响应式 ========== */
+@media screen and (max-width: 1360px) {
+  .main { padding: 32px 36px 64px; }
+}
+@media screen and (max-width: 960px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 20px 16px 48px; }
+  .title { padding: 36px 22px; }
+  h1.heading { font-size: 22px; }
+  h2.heading { font-size: 18px; }
+}
+@media screen and (max-width: 960px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 20px 16px 48px; max-width: none; }
+  .title { padding: 36px 22px; }
+  h1.heading { font-size: 22px; }
+  h2.heading { font-size: 18px; }
+}
+
+/* ========== 打印优化 ========== */
+@media print {
+  .sidebar, .progress { display: none !important; }
+  .main { margin-left: 0; max-width: none; padding: 0; }
+  body { background: #f4f7fb; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  .title, .end_page { border-radius: 0; box-shadow: none; }
+  .faq-item { box-shadow: none; border: 1px solid #dbe4ef; }
+  section { break-inside: auto !important; }
+  .code { white-space: pre-wrap; }
+}
+</style>
+</head>
+<body class="mode-explainer" data-palette="ink-blue">
+
+<!-- 顶部进度条 -->
+<div class="progress" id="progressBar"></div>
+
+<!-- 侧边导航 -->
+<aside class="sidebar">
+  <div class="brand">
+    <div class="brand-title">开发环境安装手册</div>
+    <div class="b-sub">Windows 10 / 11 · 新同事入门版</div>
+  </div>
+  <nav id="tocNav">
+    <a href="#sec0"><span class="sec-no">00</span>安装前准备</a>
+    <a href="#sec1"><span class="sec-no">01</span>JDK 21</a>
+    <a href="#sec2"><span class="sec-no">02</span>Maven 3.9.x</a>
+    <a href="#sec3"><span class="sec-no">03</span>Git for Windows</a>
+    <a href="#sec4"><span class="sec-no">04</span>Miniconda</a>
+    <a href="#sec5"><span class="sec-no">05</span>NVM + Node.js</a>
+    <a href="#sec6"><span class="sec-no">06</span>IntelliJ IDEA</a>
+    <a href="#sec7"><span class="sec-no">07</span>VS Code</a>
+    <a href="#sec8"><span class="sec-no">08</span>DBeaver</a>
+    <a href="#sec9"><span class="sec-no">09</span>全量验证清单</a>
+    <a href="#sec10"><span class="sec-no">10</span>常见问题排查</a>
+  </nav>
+  <div class="side-foot">适用版本基准：<br>JDK 21 / Maven 3.9.9<br>Git 2.4x / Miniconda py311<br>nvm-windows 1.1.x / Node 22 LTS</div>
+</aside>
+
+<!-- 主内容区 -->
+<main class="main">
+
+  <!-- ===== 封面 ===== -->
+  <section class="title">
+    <h1>Windows 开发环境安装手册</h1>
+    <div class="accent-line"></div>
+    <p>面向新入职同事的一站式安装指南，覆盖 Java / Python / 前端三套开发链路<br>含图形化与命令行两种安装方式，装完可直接开工</p>
+    <div class="badges">
+      <span>Oracle JDK 21</span>
+      <span>Maven 3.9.x</span>
+      <span>Git for Windows</span>
+      <span>Miniconda</span>
+      <span>NVM + Node 22 LTS</span>
+      <span>IDEA / VS Code / DBeaver</span>
+    </div>
+  </section>
+
+  <aside class="callout" data-variant="tip">
+    <p><b>怎么用这份手册：</b>按章节顺序装即可，每章末尾都有<b>验证命令</b>，输出结果符合预期再进入下一章。全部装完再看第 9 章「全量验证清单」一次性体检。若某一步报错，先翻第 10 章「常见问题排查」，大部分问题都能对上。</p>
+  </aside>
+
+  <!-- ===== 第 0 章：安装前准备 ===== -->
+  <section id="sec0">
+    <h1 class="heading">0. 安装前准备</h1>
+
+    <h2 class="heading">0.1 本机检查</h2>
+    <ul class="list">
+      <li><b>系统版本</b>：Windows 10（1903+）或 Windows 11，64 位系统（本手册不适用于 32 位）</li>
+      <li><b>磁盘空间</b>：至少预留 <b>10 GB</b> 空闲空间（全部工具装完约占 3~4 GB，其余留给后续项目和依赖缓存）</li>
+      <li><b>安装路径原则</b>：本手册所有工具<b>统一安装到 D 盘 <code>D:\dev\</code> 目录下</b>，避免占用 C 盘空间导致系统盘膨胀。安装前先在 D 盘建好 <code>D:\dev</code> 文件夹</li>
+      <li><b>管理员权限</b>：安装过程部分步骤需要管理员权限，建议先右键「此电脑」→「管理」→ 查看当前用户是否在 Administrators 组</li>
+      <li><b>卸载旧版本</b>：如果电脑上已装有旧版 JDK 8/11、旧版 Node、Anaconda 等，建议先卸载干净再装新的，避免 PATH 冲突（见第 10 章排查 10.5）</li>
+      <li><b>网络</b>：确保能访问外网；若在公司办公网下载慢，各章节都提供了国内镜像备选地址</li>
+    </ul>
+
+    <h2 class="heading">0.2 快速检查命令</h2>
+    <p class="paragraph">按 <code>Win + R</code> 输入 <code>cmd</code> 回车打开命令行，逐条输入以下命令，看哪些已装过：</p>
+    <pre class="code"><code><span class="c-cmd">java -version</span>
+<span class="c-cmd">mvn -v</span>
+<span class="c-cmd">git --version</span>
+<span class="c-cmd">conda --version</span>
+<span class="c-cmd">nvm version</span></code></pre>
+    <p class="paragraph muted" style="color:#5b6b80;font-size:13.5px;margin-top:-8px;">提示：命令不存在会提示「不是内部或外部命令」，属正常现象，按对应章节安装即可。</p>
+
+    <h2 class="heading">0.3 本手册安装顺序建议</h2>
+    <table class="table" data-caption="推荐安装顺序">
+      <thead><tr><th style="width:8%">顺序</th><th style="width:30%">工具</th><th style="width:62%">说明</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><b>JDK 21</b></td><td>Maven、IDEA、Java 项目都依赖它，必须最先装</td></tr>
+        <tr><td>2</td><td><b>Maven 3.9.x</b></td><td>Java 项目构建工具，依赖 JDK</td></tr>
+        <tr><td>3</td><td><b>Git</b></td><td>代码版本管理，独立无依赖</td></tr>
+        <tr><td>4</td><td><b>Miniconda</b></td><td>Python 环境管理，独立无依赖</td></tr>
+        <tr><td>5</td><td><b>NVM + Node</b></td><td>前端环境，独立无依赖</td></tr>
+        <tr><td>6</td><td><b>IDEA / VS Code / DBeaver</b></td><td>日常开发工具，装完即用</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===== 第 1 章：JDK 21 ===== -->
+  <section id="sec1">
+    <h1 class="heading">1. Oracle JDK 21 安装</h1>
+    <p class="paragraph">JDK 21 是 Java 长期支持版本（LTS），公司后端项目统一基于 JDK 21 开发。JDK 全称 Java Development Kit，安装后自带编译器（javac）和运行环境（java），后续 Maven、IDEA、SpringBoot 项目全部依赖它。</p>
+
+    <h2 class="heading">1.1 下载 JDK 21</h2>
+    <table class="table" data-caption="JDK 21 下载渠道">
+      <thead><tr><th style="width:22%">渠道</th><th style="width:48%">地址 / 操作</th><th style="width:30%">说明</th></tr></thead>
+      <tbody>
+        <tr><td><b>官方（首选）</b></td><td>Oracle 官网 <code>https://www.oracle.com/java/technologies/downloads/</code> → 选「JDK 21」→ Windows x64 → 下载 <code>jdk-21_windows-x64_bin.exe</code></td><td>下载需在页面点「Accept License Agreement」，约 180MB</td></tr>
+        <tr><td><b>镜像备选</b></td><td>华为云 <code>https://repo.huaweicloud.com/java/jdk/</code> → 找 <code>21.0.x</code> 目录 → 下载 <code>jdk-21_windows-x64_bin.exe</code></td><td>办公网下载慢时用，速度更快</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="heading">1.2 方式一：图形化安装（推荐新手）</h2>
+    <ol class="timeline">
+      <li>
+        <span class="step-title">双击安装包</span>
+        <p>双击下载好的 <code>jdk-21_windows-x64_bin.exe</code>，若弹 UAC 提示，点「是」允许。</p>
+      </li>
+      <li>
+        <span class="step-title">一路 Next</span>
+        <p>到选择安装路径页面时，<b>点「更改」将路径改为 <code>D:\dev\jdk-21</code></b>（不要装在默认的 C 盘 <code>C:\Program Files\Java</code>）。改好后点「下一步」继续，其余一路 Next。</p>
+        <p class="muted">注：请记住你实际安装的路径，后续配置环境变量要用到。以下示例均以 <code>D:\dev\jdk-21</code> 为准。</p>
+      </li>
+      <li>
+        <span class="step-title">完成</span>
+        <p>点「关闭（Close）」结束向导。接着看 1.4 节配置环境变量。</p>
+      </li>
+    </ol>
+
+    <h2 class="heading">1.3 方式二：命令行安装（winget，可选）</h2>
+    <p class="paragraph">若你习惯命令行，可用 Windows 自带包管理器 winget 一键安装（需 Windows 10 1709+ / Windows 11）：</p>
+    <pre class="code"><code><span class="c-cmd">winget install Oracle.JDK.21</span></code></pre>
+    <p class="paragraph">安装完成后同样需要手动确认环境变量（见 1.4 节）。winget 默认装到 C 盘，建议装完后将目录移动到 <code>D:\dev\jdk-21</code>，或直接用图形化方式安装到 D 盘。</p>
+
+    <h2 class="heading">1.4 配置环境变量（关键步骤）</h2>
+    <ol class="timeline">
+      <li>
+        <span class="step-title">打开系统环境变量</span>
+        <p>右键「此电脑」→「属性」→「高级系统设置」→「环境变量」。也可以 <code>Win + R</code> 输入 <code>sysdm.cpl</code> 直接打开。</p>
+      </li>
+      <li>
+        <span class="step-title">新建 JAVA_HOME</span>
+        <p>在「系统变量」区域点「新建」，变量名输入 <code>JAVA_HOME</code>，变量值输入 <code>D:\dev\jdk-21</code>（按你实际安装路径填），确定。</p>
+      </li>
+      <li>
+        <span class="step-title">配置 Path</span>
+        <p>在「系统变量」里找到 <code>Path</code>，双击打开 → 点「新建」→ 输入 <code>%JAVA_HOME%\bin</code> → 一路「确定」关闭所有窗口。</p>
+        <p class="muted">注意：所有弹出的窗口都要点「确定」保存，直接关 × 等于没配。</p>
+      </li>
+    </ol>
+
+    <h2 class="heading">1.5 验证安装</h2>
+    <p class="paragraph">重新打开一个新的命令行窗口（必须新开，旧窗口不会刷新环境变量），输入：</p>
+    <pre class="code"><code><span class="c-cmd">java -version</span>
+<span class="c-cmd">javac -version</span></code></pre>
+    <p class="paragraph">看到类似下面的输出，表示安装成功：</p>
+    <pre class="code"><code>java version "21.0.x" 2026-xx-xx LTS
+Java(TM) SE Runtime Environment (build 21.0.x+xx)
+Java HotSpot(TM) 64-Bit Server VM (build 21.0.x+xx, mixed mode, sharing)</code></pre>
+
+    <aside class="callout" data-variant="warning">
+      <p><b>常见报错：</b>若提示「java 不是内部或外部命令」，说明环境变量没生效——重新检查 1.4 步骤是否全部点过「确定」，并重开命令行再试；还不行看第 10 章排查 10.1。</p>
+    </aside>
+  </section>
+
+  <!-- ===== 第 2 章：Maven ===== -->
+  <section id="sec2">
+    <h1 class="heading">2. Maven 3.9.x 安装</h1>
+    <p class="paragraph">Maven 是 Java 项目依赖管理与构建工具，公司后端项目统一用 Maven 管理依赖（Spring Boot 等）。Maven 3.9.x 要求 JDK 8 以上，我们已装 JDK 21，完全兼容。</p>
+
+    <h2 class="heading">2.1 下载 Maven</h2>
+    <table class="table" data-caption="Maven 下载渠道">
+      <thead><tr><th style="width:22%">渠道</th><th style="width:48%">地址 / 操作</th><th style="width:30%">说明</th></tr></thead>
+      <tbody>
+        <tr><td><b>官方（首选）</b></td><td><code>https://maven.apache.org/download.cgi</code> → 下载 <b>Binary zip archive</b> 版本 <code>apache-maven-3.9.x-bin.zip</code>（约 10MB）</td><td>需选 3.9.x 系列</td></tr>
+        <tr><td><b>镜像备选</b></td><td>阿里云 <code>https://mirrors.aliyun.com/apache/maven/maven-3/</code> → 进最新 <code>3.9.x</code> 目录下载同名 zip</td><td>办公网更快</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="heading">2.2 解压到固定目录</h2>
+    <ol class="timeline">
+      <li>
+        <span class="step-title">解压 zip</span>
+        <p>将 <code>apache-maven-3.9.x-bin.zip</code> 解压，例如解压到 <code>D:\dev\apache-maven-3.9.x</code>（建议统一放 <code>D:\dev</code> 目录，方便管理）。</p>
+      </li>
+      <li>
+        <span class="step-title">确认目录结构</span>
+        <p>解压后进入该目录，应能看到 <code>bin</code>、<code>conf</code>、<code>lib</code> 等文件夹，其中 <code>bin</code> 下有 <code>mvn.cmd</code> 文件即正确。</p>
+      </li>
+    </ol>
+
+    <h2 class="heading">2.3 配置环境变量</h2>
+    <ol class="timeline">
+      <li>
+        <span class="step-title">新建 MAVEN_HOME</span>
+        <p>「此电脑」→「属性」→「高级系统设置」→「环境变量」→ 系统变量 → 新建：变量名 <code>MAVEN_HOME</code>，变量值 = 你的 Maven 解压路径（如 <code>D:\dev\apache-maven-3.9.9</code>）。</p>
+      </li>
+      <li>
+        <span class="step-title">配置 Path</span>
+        <p>编辑系统变量 <code>Path</code>，新增 <code>%MAVEN_HOME%\bin</code>，全部点「确定」。</p>
+      </li>
+    </ol>
+
+    <h2 class="heading">2.4 配置阿里云镜像（settings.xml，重要）</h2>
+    <p class="paragraph">Maven 默认从中央仓库下载依赖，在国内很慢。建议直接替换为阿里云镜像。Maven 的配置文件位于 <code>解压目录\conf\settings.xml</code>，用记事本打开，找到 <code>&lt;mirrors&gt;</code> 标签（通常在 146 行附近），把下面内容粘贴进去：</p>
+    <pre class="code"><code><span class="c-comment">&lt;!-- 替换默认 mirror 为阿里云镜像，加速依赖下载 --&gt;</span>
+<span class="c-cmd">&lt;mirrors&gt;</span>
+  &lt;mirror&gt;
+    &lt;id&gt;aliyunmaven&lt;/id&gt;
+    &lt;mirrorOf&gt;central&lt;/mirrorOf&gt;
+    &lt;name&gt;阿里云公共仓库&lt;/name&gt;
+    &lt;url&gt;https://maven.aliyun.com/repository/public&lt;/url&gt;
+  &lt;/mirror&gt;
+<span class="c-cmd">&lt;/mirrors&gt;</span></code></pre>
+    <p class="paragraph muted" style="color:#5b6b80;font-size:13.5px;">如果原来 <code>&lt;mirrors&gt;</code> 里已有内容，把旧的 <code>&lt;mirror&gt;</code> 整段删除再粘贴上面的即可（只保留一个 mirror 最干净）。</p>
+
+    <h2 class="heading">2.5 配置本地仓库目录（重要）</h2>
+    <p class="paragraph">Maven 下载的所有依赖包默认存放在 <code>C:\Users\你的用户名\.m2\repository</code>，随着项目增多会占用数 GB 的 C 盘空间。<b>建议改到 D 盘</b>，与 Maven 放一起方便管理。</p>
+    <ol class="timeline">
+      <li>
+        <span class="step-title">创建本地仓库目录</span>
+        <p>在 D 盘创建文件夹 <code>D:\dev\maven-repo</code>（可自定义路径，建议和 Maven 放同一级目录）。</p>
+      </li>
+      <li>
+        <span class="step-title">修改 settings.xml</span>
+        <p>用记事本打开 <code>D:\dev\apache-maven-3.9.9\conf\settings.xml</code>，找到约第 55 行被注释的 <code>&lt;localRepository&gt;</code> 配置：</p>
+      </li>
+    </ol>
+    <pre class="code"><code><span class="c-comment">&lt;!-- 原始内容（被注释的，大约在第 53~55 行） --&gt;</span>
+&lt;!-- &lt;localRepository&gt;/path/to/local/repo&lt;/localRepository&gt; --&gt;
+
+<span class="c-comment">&lt;!-- 改为（去掉注释，填你的路径，注意用正斜杠 / ） --&gt;</span>
+<span class="c-cmd">&lt;localRepository&gt;D:/dev/maven-repo&lt;/localRepository&gt;</span></code></pre>
+    <aside class="callout" data-variant="warning">
+      <p><b>注意：</b>路径分隔符建议用正斜杠 <code>/</code>（如 <code>D:/dev/maven-repo</code>），反斜杠 <code>\</code> 在 XML 中需要写 <code>\\</code> 双反斜杠，容易出错。</p>
+    </aside>
+    <aside class="callout" data-variant="tip">
+      <p><b>验证：</b>修改后在命令行执行 <code>mvn help:system</code>，Maven 会下载基础插件到你配置的 <code>D:\dev\maven-repo</code> 目录。去该目录看是否生成了文件夹，有就说明配置生效了。</p>
+    </aside>
+
+    <h2 class="heading">2.6 验证安装</h2>
+    <p class="paragraph">重开命令行，输入：</p>
+    <pre class="code"><code><span class="c-cmd">mvn -v</span></code></pre>
+    <p class="paragraph">看到类似输出即成功：</p>
+    <pre class="code"><code>Apache Maven 3.9.9 (8e0a8c1b6a)
+Maven home: D:\dev\apache-maven-3.9.9
+Java version: 21.0.x, vendor: Oracle Corporation
+Java home: C:\Program Files\Java\jdk-21
+...</code></pre>
+    <p class="paragraph muted" style="color:#5b6b80;font-size:13.5px;">重点看 <b>Java version 是否为 21</b>。若显示的 Java 版本不对，说明系统里有多个 JDK 抢占了 PATH，见第 10 章排查 10.2。</p>
+  </section>
+
+  <!-- ===== 第 3 章：Git ===== -->
+  <section id="sec3">
+    <h1 class="heading">3. Git for Windows 安装</h1>
+    <p class="paragraph">Git 是代码版本管理工具，公司代码统一存放在 Git 仓库（如 Gitee / GitLab）。Windows 上安装「Git for Windows」会自带 Git Bash 终端，最常用。</p>
+
+    <h2 class="heading">3.1 下载 Git</h2>
+    <table class="table" data-caption="Git 下载渠道">
+      <thead><tr><th style="width:22%">渠道</th><th style="width:48%">地址 / 操作</th><th style="width:30%">说明</th></tr></thead>
+      <tbody>
+        <tr><td><b>官方（首选）</b></td><td><code>https://git-scm.com/download/win</code> → 下载 64-bit 版 <code>Git-2.4x.x-64-bit.exe</code></td><td>官网下载较慢时用镜像</td></tr>
+        <tr><td><b>镜像备选</b></td><td>清华镜像 <code>https://mirrors.tuna.tsinghua.edu.cn/github-release/git-for-windows/git/</code> → 选最新版 → 下载 <code>Git-...-64-bit.exe</code></td><td>国内速度快</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="heading">3.2 图形化安装（一路默认即可）</h2>
+    <ol class="timeline">
+      <li>
+        <span class="step-title">双击安装包</span>
+        <p>双击 <code>Git-2.4x.x-64-bit.exe</code>，按提示点「Next」。</p>
+      </li>
+      <li>
+        <span class="step-title">更改安装路径</span>
+        <p>到 Select Destination Location 页面，<b>将路径改为 <code>D:\dev\Git</code></b>（默认是 C 盘 <code>C:\Program Files\Git</code>），改好后点 Next。</p>
+      </li>
+      <li>
+        <span class="step-title">关键选项保持默认</span>
+        <p>出现以下页面时<b>全部保持默认</b>，直接 Next：</p>
+        <p class="muted">① Select Components（勾选默认项即可）<br>② Default branch name → 默认 master 即可<br>③ Adjusting PATH → 选中间项 <code>Git from the command line and also from 3rd-party software</code>（推荐）<br>④ 其余（换行符处理、凭据管理器等）保持默认</p>
+      </li>
+      <li>
+        <span class="step-title">完成</span>
+        <p>点「Install」→「Finish」。完成后桌面或开始菜单会出现 <b>Git Bash</b>。</p>
+      </li>
+    </ol>
+
+    <h2 class="heading">3.3 命令行安装（winget，可选）</h2>
+    <pre class="code"><code><span class="c-cmd">winget install --id Git.Git -e</span></code></pre>
+
+    <h2 class="heading">3.4 首次使用配置（必须做）</h2>
+    <p class="paragraph">打开 <b>Git Bash</b>（开始菜单搜索 Git Bash），配置你的用户名和邮箱（会写入每次提交记录，<b>必须用真实姓名和公司邮箱</b>）：</p>
+    <pre class="code"><code><span class="c-cmd">git config --global user.name "你的姓名"</span>
+<span class="c-cmd">git config --global user.email "你的邮箱@telecom.cn"</span></code></pre>
+
+    <h2 class="heading">3.5 生成 SSH 密钥（推荐，拉取私有仓库用）</h2>
+    <p class="paragraph">在 Git Bash 中执行（一路回车即可，口令可留空）：</p>
+    <pre class="code"><code><span class="c-cmd">ssh-keygen -t ed25519 -C "你的邮箱@telecom.cn"</span></code></pre>
+    <p class="paragraph">然后查看公钥内容，复制后粘贴到 Gitee / GitLab 的「SSH 公钥」设置里：</p>
+    <pre class="code"><code><span class="c-cmd">cat ~/.ssh/id_ed25519.pub</span></code></pre>
+    <p class="paragraph muted" style="color:#5b6b80;font-size:13.5px;">若公司仓库用 HTTP 方式（带账号密码），可跳过本步骤。</p>
+
+    <h2 class="heading">3.6 验证安装</h2>
+    <pre class="code"><code><span class="c-cmd">git --version</span>
+<span class="c-cmd">git config --global user.name</span></code></pre>
+    <p class="paragraph">看到 <code>git version 2.4x.x.windows.1</code> 及刚才配置的姓名即成功。</p>
+  </section>
+
+  <!-- ===== 第 4 章：Miniconda ===== -->
+  <section id="sec4">
+    <h1 class="heading">4. Miniconda 安装</h1>
+    <p class="paragraph">Miniconda 是轻量级 Python 环境管理工具，可创建相互隔离的 Python 虚拟环境（项目 A 用 py3.10，项目 B 用 py3.11，互不干扰）。公司内部 Python 项目、AI 相关脚本建议统一用它管理。</p>
+
+    <h2 class="heading">4.1 下载 Miniconda</h2>
+    <table class="table" data-caption="Miniconda 下载渠道">
+      <thead><tr><th style="width:22%">渠道</th><th style="width:48%">地址 / 操作</th><th style="width:30%">说明</th></tr></thead>
+      <tbody>
+        <tr><td><b>官方（首选）</b></td><td><code>https://docs.conda.io/en/latest/miniconda.html</code> → 选 Windows x86_64 → 下载 <code>Miniconda3-latest-Windows-x86_64.exe</code></td><td>约 80MB</td></tr>
+        <tr><td><b>镜像备选</b></td><td>清华镜像 <code>https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/</code> → 下载最新 <code>Miniconda3-py311_...-Windows-x86_64.exe</code></td><td>办公网更快</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="heading">4.2 安装（注意勾选项）</h2>
+    <ol class="timeline">
+      <li>
+        <span class="step-title">双击安装包</span>
+        <p>双击 <code>Miniconda3-latest-Windows-x86_64.exe</code>，Next。</p>
+      </li>
+      <li>
+        <span class="step-title">选择安装位置</span>
+        <p><b>将路径改为 <code>D:\dev\miniconda3</code></b>（默认是 C 盘 <code>C:\Users\你的用户名\miniconda3</code>，不建议装 C 盘）。</p>
+      </li>
+      <li>
+        <span class="step-title">关键勾选项（必看）</span>
+        <p>到 Advanced Installation Options 页面，<b>勾选第一项</b> <code>Add Miniconda3 to my PATH environment variable</code>（把 conda 加入环境变量），其余保持默认 → Install。</p>
+        <p class="muted">如果不勾，conda 命令只能在 Anaconda Prompt 里用，很麻烦。</p>
+      </li>
+      <li>
+        <span class="step-title">完成</span>
+        <p>安装结束后建议重开一个命令行窗口。</p>
+      </li>
+    </ol>
+
+    <h2 class="heading">4.3 配置国内镜像源（加速下载）</h2>
+    <p class="paragraph">打开命令行，依次执行（任选其一，推荐清华源）：</p>
+    <pre class="code"><code><span class="c-comment"># 清华源（推荐）</span>
+<span class="c-cmd">conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/</span>
+<span class="c-cmd">conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/</span>
+<span class="c-cmd">conda config --set show_channel_urls yes</span></code></pre>
+    <p class="paragraph">配置后执行 <code>conda clean -i</code> 可清索引缓存加速。</p>
+
+    <h2 class="heading">4.4 创建项目专用 Python 环境（推荐）</h2>
+    <p class="paragraph">日常开发不要直接用 base 环境，给每个项目建独立环境：</p>
+    <pre class="code"><code><span class="c-comment"># 创建 Python 3.11 环境，名字叫 py311</span>
+<span class="c-cmd">conda create -n py311 python=3.11 -y</span>
+
+<span class="c-comment"># 激活该环境（每次进项目前先激活）</span>
+<span class="c-cmd">conda activate py311</span>
+
+<span class="c-comment"># 验证当前 Python 版本</span>
+<span class="c-cmd">python --version</span></code></pre>
+
+    <h2 class="heading">4.5 验证安装</h2>
+    <pre class="code"><code><span class="c-cmd">conda --version</span>
+<span class="c-cmd">conda env list</span></code></pre>
+    <p class="paragraph">看到 <code>conda 23.x.x</code> 和环境列表即成功。激活环境后命令行前缀会变为 <code>(py311)</code>。</p>
+
+    <aside class="callout" data-variant="warning">
+      <p><b>注意：</b>conda 首次激活可能较慢属正常；若提示 <code>conda 不是内部或外部命令</code>，多半是没勾 PATH 或没重开窗口，见第 10 章排查 10.3。</p>
+    </aside>
+  </section>
+
+  <!-- ===== 第 5 章：NVM ===== -->
+  <section id="sec5">
+    <h1 class="heading">5. NVM（nvm-windows）+ Node.js 安装</h1>
+    <p class="paragraph">NVM（Node Version Manager）用于管理多个 Node.js 版本，公司前端项目可能用到不同 Node 大版本（如 18 / 20 / 22），装好 NVM 后可随时切换。Windows 上使用的是 <b>nvm-windows</b>（注意与 Linux/macOS 的 nvm 不是同一个软件）。</p>
+
+    <h2 class="heading">5.1 下载 nvm-windows</h2>
+    <table class="table" data-caption="nvm-windows 下载渠道">
+      <thead><tr><th style="width:22%">渠道</th><th style="width:48%">地址 / 操作</th><th style="width:30%">说明</th></tr></thead>
+      <tbody>
+        <tr><td><b>官方（首选）</b></td><td><code>https://github.com/coreybutler/nvm-windows/releases</code> → 下载 <code>nvm-setup.exe</code></td><td>GitHub 慢时用镜像</td></tr>
+        <tr><td><b>镜像备选</b></td><td>国内加速（如 ghproxy）或清华镜像搜索 nvm-windows，下载 <code>nvm-setup.exe</code></td><td>—</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="heading">5.2 安装 nvm-windows</h2>
+    <ol class="timeline">
+      <li>
+        <span class="step-title">先卸载已有 Node（如果有）</span>
+        <p>如果电脑已装过 Node.js，先去「控制面板 → 程序和功能」卸载干净，否则会冲突。</p>
+      </li>
+      <li>
+        <span class="step-title">运行 nvm-setup.exe</span>
+        <p>双击安装，Next。<b>安装路径改为 <code>D:\dev\nvm</code></b>（默认在 C 盘 AppData 下，建议改到 D 盘）。注意路径里<b>不要有中文</b>。安装过程中会提示选择 Node.js 的 symlink 路径，改为 <code>D:\dev\nodejs</code>。</p>
+      </li>
+      <li>
+        <span class="step-title">完成</span>
+        <p>Finish 后重开命令行，执行 <code>nvm version</code> 应看到版本号。</p>
+      </li>
+    </ol>
+
+    <h2 class="heading">5.3 安装 Node.js LTS 版本</h2>
+    <pre class="code"><code><span class="c-comment"># 查看可安装版本</span>
+<span class="c-cmd">nvm list available</span>
+
+<span class="c-comment"># 安装最新 LTS（如 22.x，公司统一用 LTS 即可）</span>
+<span class="c-cmd">nvm install 22.16.0</span>
+
+<span class="c-comment"># 切换到该版本（Windows 下 use 必须以管理员身份运行命令行）</span>
+<span class="c-cmd">nvm use 22.16.0</span></code></pre>
+    <aside class="callout" data-variant="warning">
+      <p><b>重要：</b><code>nvm use</code> 需要<b>管理员权限</b>。若提示权限不足，请右键命令行「以管理员身份运行」再执行。</p>
+    </aside>
+
+    <h2 class="heading">5.4 配置 npm 国内镜像（加速）</h2>
+    <pre class="code"><code><span class="c-cmd">npm config set registry https://registry.npmmirror.com</span></code></pre>
+
+    <h2 class="heading">5.5 验证安装</h2>
+    <pre class="code"><code><span class="c-cmd">node -v</span>
+<span class="c-cmd">npm -v</span></code></pre>
+    <p class="paragraph">分别看到 <code>v22.x.x</code> 和 <code>10.x.x</code> 即成功。切换版本用 <code>nvm list</code> 查看已装版本，<code>nvm use 版本号</code> 切换。</p>
+  </section>
+
+  <!-- ===== 第 6 章：IntelliJ IDEA ===== -->
+  <section id="sec6">
+    <h1 class="heading">6. IntelliJ IDEA 安装</h1>
+    <p class="paragraph">IntelliJ IDEA 是 Java 开发主力 IDE，公司后端日常编码都在它上面。社区版（Community）免费够用，旗舰版（Ultimate）需授权。新同事装 Community 版即可。</p>
+
+    <h2 class="heading">6.1 下载</h2>
+    <table class="table" data-caption="IDEA 下载渠道">
+      <thead><tr><th style="width:22%">渠道</th><th style="width:48%">地址 / 操作</th><th style="width:30%">说明</th></tr></thead>
+      <tbody>
+        <tr><td><b>官方（首选）</b></td><td><code>https://www.jetbrains.com/idea/download/</code> → 下拉选 <b>Community</b>（免费）→ 下载 <code>ideaIC-2024.x.exe</code></td><td>约 700MB</td></tr>
+        <tr><td><b>命令行</b></td><td>执行 <code>winget install --id JetBrains.IntelliJIDEA.Community -e</code></td><td>自动安装到默认路径</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="heading">6.2 安装</h2>
+    <ol class="timeline">
+      <li>
+        <span class="step-title">运行安装包</span>
+        <p>双击 <code>ideaIC-2024.x.exe</code>，Next。<b>安装路径改为 <code>D:\dev\IntelliJ IDEA Community Edition</code></b>（默认在 C 盘 <code>C:\Program Files</code> 下）。</p>
+      </li>
+      <li>
+        <span class="step-title">勾选关联项</span>
+        <p>到 Installation Options 页面，建议勾选：<br>① <code>64-bit launcher</code>（创建 64 位快捷方式）<br>② <code>Add "Open Folder as Project"</code>（右键菜单支持）<br>③ <code>.java</code>（关联 java 文件）<br>④ <code>Add launchers dir to the PATH</code>（加入环境变量，可选）</p>
+      </li>
+      <li>
+        <span class="step-title">完成</span>
+        <p>Install → Finish。首次启动会提示选择主题（Darcula 深色 / Light 浅色），按个人喜好选即可。</p>
+      </li>
+    </ol>
+
+    <h2 class="heading">6.3 配置项目 JDK（指向 JDK 21）</h2>
+    <ol class="timeline">
+      <li>
+        <span class="step-title">打开项目结构设置</span>
+        <p>菜单栏 <code>File → Project Structure → SDK</code>（中文版：文件 → 项目结构 → SDK）。</p>
+      </li>
+      <li>
+        <span class="step-title">添加 JDK 21</span>
+        <p>点 <code>+</code> → <code>JDK</code> → 选择 JDK 安装目录 <code>D:\dev\jdk-21</code> → 确定，IDEA 会自动识别版本 21。</p>
+      </li>
+      <li>
+        <span class="step-title">设为项目 SDK</span>
+        <p>在 Project Structure 顶部「Project SDK」下拉选择刚加的 21，应用（Apply）确定。</p>
+      </li>
+    </ol>
+
+    <h2 class="heading">6.4 配置 Maven（指向本地 Maven 与 settings.xml）</h2>
+    <ol class="timeline">
+      <li>
+        <span class="step-title">打开 Maven 设置</span>
+        <p><code>File → Settings → Build, Execution, Deployment → Build Tools → Maven</code>。</p>
+      </li>
+      <li>
+        <span class="step-title">指定 Maven home</span>
+        <p>「Maven home path」选择你的解压路径 <code>D:\dev\apache-maven-3.9.9</code>（不用 bundled 的）。</p>
+      </li>
+      <li>
+        <span class="step-title">指定 settings.xml</span>
+        <p>勾选「User settings file」的「Override」，选择 <code>D:\dev\apache-maven-3.9.9\conf\settings.xml</code> → Apply → 确定。</p>
+      </li>
+    </ol>
+    <aside class="callout" data-variant="tip">
+      <p><b>验证：</b>打开任意 Maven 项目，右下角 Maven 面板能看到依赖正常下载即配置正确。若下载慢，确认 settings.xml 已配阿里云镜像（见 2.4）。</p>
+    </aside>
+  </section>
+
+  <!-- ===== 第 7 章：VS Code ===== -->
+  <section id="sec7">
+    <h1 class="heading">7. Visual Studio Code 安装</h1>
+    <p class="paragraph">VS Code 是轻量级、插件丰富的编辑器，前端、Python、脚本、配置文件编辑都用它。配合 NVM / Miniconda 开箱即用。</p>
+
+    <h2 class="heading">7.1 下载与安装</h2>
+    <table class="table" data-caption="VS Code 下载渠道">
+      <thead><tr><th style="width:22%">渠道</th><th style="width:48%">地址 / 操作</th><th style="width:30%">说明</th></tr></thead>
+      <tbody>
+        <tr><td><b>官方（首选）</b></td><td><code>https://code.visualstudio.com/</code> → 下载 Windows x64 System Installer <code>VSCodeSetup-x64-x.x.x.exe</code></td><td>建议选 System 版（全用户）</td></tr>
+        <tr><td><b>命令行</b></td><td>执行 <code>winget install --id Microsoft.VisualStudioCode -e</code></td><td>自动安装</td></tr>
+      </tbody>
+    </table>
+    <ol class="timeline">
+      <li>
+        <span class="step-title">运行安装包</span>
+        <p>双击安装，Next。<b>安装路径改为 <code>D:\dev\Microsoft VS Code</code></b>（默认在 C 盘）。到「选择附加任务」页面，<b>建议勾选</b>：<br>① 将「通过 Code 打开」操作添加到资源管理器上下文菜单<br>② 将 Code 注册为支持的文件类型编辑器<br>③ 添加到 PATH（重启后生效）</p>
+      </li>
+      <li>
+        <span class="step-title">完成</span>
+        <p>Install → Finish。安装后可在任意文件夹右键「通过 Code 打开」。</p>
+      </li>
+    </ol>
+
+    <h2 class="heading">7.2 推荐插件（装完即装）</h2>
+    <table class="table" data-caption="常用插件清单">
+      <thead><tr><th style="width:32%">插件名</th><th style="width:68%">用途</th></tr></thead>
+      <tbody>
+        <tr><td><b>Chinese (Simplified) Language Pack</b></td><td>中文界面，安装后在命令面板搜 <code>Configure Display Language</code> 切换</td></tr>
+        <tr><td><b>Python</b></td><td>Python 开发支持（语法、调试），配合 Miniconda 解释器</td></tr>
+        <tr><td><b>ESLint + Prettier</b></td><td>前端代码检查与格式化</td></tr>
+        <tr><td><b>GitLens</b></td><td>Git 增强插件，看每行代码的提交历史</td></tr>
+        <tr><td><b>Java Extension Pack</b></td><td>Java 轻量开发支持（非主力，主力用 IDEA）</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="heading">7.3 配置 Python 解释器（关联 Miniconda 环境）</h2>
+    <ol class="timeline">
+      <li>
+        <span class="step-title">打开选择解释器</span>
+        <p>在 VS Code 中打开任意 <code>.py</code> 文件，按 <code>Ctrl + Shift + P</code> → 输入 <code>Python: Select Interpreter</code> 回车。</p>
+      </li>
+      <li>
+        <span class="step-title">选 conda 环境</span>
+        <p>列表里应能看到 <code>py311 (Miniconda3)</code>，选中即可。若没有，点「Enter interpreter path」手动指定 <code>D:\dev\miniconda3\envs\py311\python.exe</code>。</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ===== 第 8 章：DBeaver ===== -->
+  <section id="sec8">
+    <h1 class="heading">8. DBeaver 数据库客户端安装</h1>
+    <p class="paragraph">DBeaver 是免费开源的数据库客户端，支持 MySQL、PostgreSQL、Oracle 等几十种数据库，替代收费的 Navicat。日常查数据、改表、导出都用它。</p>
+
+    <h2 class="heading">8.1 下载与安装</h2>
+    <table class="table" data-caption="DBeaver 下载渠道">
+      <thead><tr><th style="width:22%">渠道</th><th style="width:48%">地址 / 操作</th><th style="width:30%">说明</th></tr></thead>
+      <tbody>
+        <tr><td><b>官方（首选）</b></td><td><code>https://dbeaver.io/download/</code> → Community Edition → Windows x86 64 bit → 下载 <code>dbeaver-ce-x.x.x-setup.exe</code></td><td>免费版</td></tr>
+        <tr><td><b>命令行</b></td><td>执行 <code>winget install --id dbeaver.dbeaver -e</code></td><td>自动安装</td></tr>
+      </tbody>
+    </table>
+    <ol class="timeline">
+      <li>
+        <span class="step-title">运行安装包</span>
+        <p>双击 <code>dbeaver-ce-x.x.x-setup.exe</code>，Next。<b>安装路径改为 <code>D:\dev\DBeaver</code></b>（默认在 C 盘）。可选择是否关联 <code>.sql</code> 文件、创建桌面快捷方式，其余默认。</p>
+      </li>
+      <li>
+        <span class="step-title">完成</span>
+        <p>Install → Finish。首次启动会初始化驱动下载，需要联网。</p>
+      </li>
+    </ol>
+
+    <h2 class="heading">8.2 新建 MySQL 连接（最常用）</h2>
+    <ol class="timeline">
+      <li>
+        <span class="step-title">新建连接</span>
+        <p>左上角「新建连接」按钮（或菜单 Database → New Connection）→ 选 <b>MySQL</b> → Next。</p>
+      </li>
+      <li>
+        <span class="step-title">填写连接信息</span>
+        <p>Server Host 填数据库地址，Port 默认 3306，Database 填库名，Username/Password 填账号。点「Test Connection」测试。</p>
+      </li>
+      <li>
+        <span class="step-title">下载驱动</span>
+        <p>首次连 MySQL 会提示下载驱动（MySQL Connector/J），点「Download」自动从 maven 仓库拉取。下载完成点 Finish，左侧导航即可看到表结构。</p>
+      </li>
+    </ol>
+    <aside class="callout" data-variant="tip">
+      <p><b>小技巧：</b>驱动下载慢可在 DBeaver 的 Preferences → Drivers → MySQL → Libraries 里把 Maven 仓库地址改成阿里云镜像。</p>
+    </aside>
+  </section>
+
+  <!-- ===== 第 9 章：全量验证清单 ===== -->
+  <section id="sec9">
+    <h1 class="heading">9. 全量验证清单</h1>
+    <p class="paragraph">全部装完后，打开一个<b>新</b>的命令行窗口，把下面命令一次性跑一遍，对照预期输出，全部通过就说明环境搭好了。</p>
+
+    <h2 class="heading">9.1 命令一览</h2>
+    <pre class="code"><code><span class="c-comment">===== Java 链路 =====</span>
+<span class="c-cmd">java -version</span>            <span class="c-comment"># 应显示 21.0.x</span>
+<span class="c-cmd">javac -version</span>           <span class="c-cmd"># 应显示 21.0.x</span>
+<span class="c-cmd">mvn -v</span>                  <span class="c-comment"># Maven 3.9.x + Java 21</span>
+
+<span class="c-comment">===== Git =====</span>
+<span class="c-cmd">git --version</span>            <span class="c-comment"># git version 2.4x.x.windows.1</span>
+<span class="c-cmd">git config user.name</span>     <span class="c-comment"># 显示你的姓名</span>
+
+<span class="c-comment">===== Python =====</span>
+<span class="c-cmd">conda --version</span>          <span class="c-comment"># conda 23.x.x</span>
+<span class="c-cmd">conda activate py311</span> &amp;&amp; <span class="c-cmd">python --version</span>  <span class="c-comment"># Python 3.11.x</span>
+
+<span class="c-comment">===== 前端 =====</span>
+<span class="c-cmd">nvm version</span>             <span class="c-comment"># 1.1.x</span>
+<span class="c-cmd">node -v</span>                 <span class="c-comment"># v22.x.x</span>
+<span class="c-cmd">npm -v</span>                  <span class="c-comment"># 10.x.x</span></code></pre>
+
+    <h2 class="heading">9.2 验收对照表</h2>
+    <table class="table" data-caption="环境验收对照表">
+      <thead><tr><th style="width:18%">工具</th><th style="width:30%">验证命令</th><th style="width:52%">预期输出关键字</th></tr></thead>
+      <tbody>
+        <tr><td><b>JDK 21</b></td><td><code>java -version</code></td><td>含 <code>"21.0.x"</code> 且标注 LTS</td></tr>
+        <tr><td><b>Maven</b></td><td><code>mvn -v</code></td><td><code>Apache Maven 3.9.x</code> + Java version 21</td></tr>
+        <tr><td><b>Git</b></td><td><code>git --version</code></td><td><code>git version 2.4x.x.windows.1</code></td></tr>
+        <tr><td><b>Miniconda</b></td><td><code>conda --version</code></td><td><code>conda 23.x.x</code></td></tr>
+        <tr><td><b>NVM</b></td><td><code>nvm version</code></td><td><code>1.1.x</code> 或更高</td></tr>
+        <tr><td><b>Node</b></td><td><code>node -v</code></td><td><code>v22.x.x</code></td></tr>
+        <tr><td><b>IDEA</b></td><td>启动后看右下角</td><td>Project Structure 中 SDK 列表有 21</td></tr>
+        <tr><td><b>VS Code</b></td><td>终端输入 <code>code -v</code></td><td>显示版本号，右键「通过 Code 打开」可用</td></tr>
+        <tr><td><b>DBeaver</b></td><td>新建连接 Test</td><td>能连通公司 MySQL 并看到表</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ===== 第 10 章：常见问题排查 ===== -->
+  <section id="sec10">
+    <h1 class="heading">10. 常见问题排查</h1>
+    <p class="paragraph">把最常踩的坑集中放这里，按编号查。多数报错都是环境变量没生效或路径填错。</p>
+
+    <div class="faq-item">
+      <p class="q">10.1 提示「java 不是内部或外部命令」？</p>
+      <p class="a">环境变量没生效。检查三件事：① 系统变量里 <code>JAVA_HOME</code> 路径对不对（指向 jdk-21 根目录）；② <code>Path</code> 里有没有 <code>%JAVA_HOME%\bin</code>；③ <b>必须重开一个新命令行窗口</b>，旧窗口不会刷新。若改完还不行，把 <code>C:\Program Files\Java\jdk-21\bin</code> 直接加到 Path 里（绝对路径）再试。</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="q">10.2 mvn -v 显示的 Java 版本不是 21？</p>
+      <p class="a">系统里有多个 JDK 抢占了 PATH。打开环境变量，把 <code>JAVA_HOME</code> 的顺序在 Path 中提到最前；或检查是否有别的 <code>JAVA_HOME</code>（如用户变量）覆盖了系统变量。也可在命令行执行 <code>where java</code> 看实际用的是哪个 java.exe。</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="q">10.3 「conda 不是内部或外部命令」？</p>
+      <p class="a">安装时没勾「Add Miniconda3 to my PATH」。两个办法：① 重装时勾上；② 手动把 <code>C:\Users\你的用户名\miniconda3\Scripts</code> 和 <code>C:\Users\你的用户名\miniconda3</code> 加到 Path，重开窗口。</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="q">10.4 nvm use 提示权限不足 / 切换没生效？</p>
+      <p class="a">Windows 下 <code>nvm use</code> 需要管理员权限。右键命令行「以管理员身份运行」再执行。另外确认安装 nvm 前已卸载旧的独立 Node，否则会冲突。</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="q">10.5 装新版工具前旧版卸不干净导致冲突？</p>
+      <p class="a">① 控制面板卸载旧软件；② 删除残留目录（如旧 <code>C:\Program Files\Java\jdk-11</code>）；③ 清理环境变量里旧的相关项（旧 JAVA_HOME、旧 Path 项）；④ 重开命令行执行 <code>where java</code> 确认没指向旧版本。</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="q">10.6 Maven / npm 下载依赖特别慢或失败？</p>
+      <p class="a">没配国内镜像。Maven 确认 settings.xml 配了阿里云镜像（2.4）；npm 执行 <code>npm config set registry https://registry.npmmirror.com</code>，再 <code>npm config get registry</code> 确认。</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="q">10.7 环境变量改了但命令行还是旧的？</p>
+      <p class="a">必须<b>重新打开</b>一个新的命令行窗口，已打开的窗口不会重新读取环境变量。改完变量后也可重启资源管理器（任务管理器里重启「Windows 资源管理器」进程）确保生效。</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="q">10.8 winget 提示「未识别命令」？</p>
+      <p class="a">winget 是 Windows 10 1709+ 自带，旧系统可能没有。可去 Microsoft Store 搜索「应用安装程序」安装，或直接用各章节的图形化安装方式。</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="q">10.9 下载安装包时浏览器报安全拦截？</p>
+      <p class="a">Edge/Chrome 对 .exe 有时弹拦截提示，点「保留」即可。若被 SmartScreen 拦，点「更多信息」→「仍要运行」。请认准官方域名下载，避免第三方站点捆绑安装。</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="q">10.10 IDEA 中 Maven 依赖一直红/下载失败？</p>
+      <p class="a">确认 IDEA 用的 settings.xml 是你配了阿里云镜像的那个（见 6.4）。可在 IDEA 右下 Maven 面板点刷新按钮重下；若个别依赖失败，删本地仓库里对应目录再重新构建。</p>
+    </div>
+  </section>
+
+  <!-- ===== 尾页 ===== -->
+  <section class="title end_page">
+    <h1>环境就绪，开始搬砖</h1>
+    <p>按手册顺序装完后，第 9 章全量验证通过即可开工。<br>遇到问题先翻第 10 章排查表，90% 的坑都在里面。</p>
+  </section>
+
+</main>
+
+<script>
+(function(){
+  var bar = document.getElementById('progressBar');
+  var links = Array.prototype.slice.call(document.querySelectorAll('#tocNav a'));
+  var secs = links.map(function(a){ return document.getElementById(a.getAttribute('href').slice(1)); });
+  function onScroll(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var p = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    bar.style.width = p + '%';
+    var pos = h.scrollTop + 120;
+    var cur = 0;
+    for (var i = 0; i < secs.length; i++){
+      if (secs[i] && secs[i].offsetTop <= pos) cur = i;
+    }
+    links.forEach(function(a, i){ a.classList.toggle('active', i === cur); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
+
+</body>
+</html>

@@ -29,3 +29,5 @@ markdown-reader.html: markdown文件读取显示
 taken.html: 一个普通网页，到底能知道你多少信息
 
 hospital-system.html: 医疗相关系统介绍
+
+dev-env-setup-guide:开发环境配置手册
